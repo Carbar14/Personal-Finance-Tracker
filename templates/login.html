@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+<!--Title Block-->
+{% block title %}Login{% endblock %}
+
+<!--Main Block-->
+{% block main %}
+<!-- container -->
+<div class="cont center" style="width: 80vw; max-width: 300px">
+  <div class="loginBox">
+    <!-- display alerts -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert" style="color: red">{{ message }}</div>
+    {% endfor %}
+    <form action="/login" method="post">
+      <!-- username  -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" id="username" />
+      </div>
+      <!-- password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          id="password"
+        />
+      </div>
+      <!-- checkbox  -->
+      <div class="mb-3 form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="exampleCheck1"
+          name="keepSignedIn"
+        />
+        <label class="form-check-label" for="exampleCheck1"
+          >Keep me signed in.</label
+        >
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div>
+  <form action="/register" style="padding: 10px">
+    Already have an account?
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>
+
+{%endblock %}
