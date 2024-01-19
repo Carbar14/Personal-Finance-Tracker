@@ -100,4 +100,12 @@ def register():
             return redirect("/")
     return render_template("register.html")
 
+@app.route("/add-expense", methods=["GET", "POST"])
+@login_required
+def addExpense():
+    return render_template("addExpense.html")
 
+@app.route("/add-income", methods=["GET", "POST"])
+@login_required
+def addIncome():
+    return render_template("addIncome.html")
