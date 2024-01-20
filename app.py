@@ -20,7 +20,10 @@ Session(app)
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    conn = get_db_connection()
+    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    conn.close()
+    return render_template("index.html", expenses=exps)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -31,7 +34,6 @@ def login():
     conn = get_db_connection()
 
     if request.method == "POST":
-        print("a")
         username = request.form.get("username")
         password = request.form.get("password")
 
@@ -86,7 +88,7 @@ def register():
             #registers user
             conn.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, password))
             #sets session
-            session["user_id"] = conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall()[0]["id"]
+            session["user_id"] = int(conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall()[0]["id"])
             
             #Keep signed in
             if not bool(request.form.get("keepSignedIn")):
@@ -103,7 +105,14 @@ def register():
 @app.route("/add-expense", methods=["GET", "POST"])
 @login_required
 def addExpense():
-    return render_template("addExpense.html")
+    conn = get_db_connection()
+
+    if request.method == "POST":
+        conn.commit()
+        conn.close()
+        print(1)
+    else:
+        return render_template("addExpense.html")
 
 @app.route("/add-income", methods=["GET", "POST"])
 @login_required
