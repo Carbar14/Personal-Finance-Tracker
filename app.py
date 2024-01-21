@@ -108,9 +108,18 @@ def addExpense():
     conn = get_db_connection()
 
     if request.method == "POST":
+        userId = session["user_id"]
+        category = request.form.get("category")
+        description = request.form.get("description")
+        purchaseLocation = request.form.get("purchaseLocation")
+        quantity = int(request.form.get("quantity"))
+        price = float(request.form.get("price"))
+        date = request.form.get("date")
+
+        conn.execute("INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date) VALUES (?, ?, ?, ?, ?, ?, ?)", (userId, category, description, purchaseLocation, quantity, price, date))
         conn.commit()
         conn.close()
-        print(1)
+        return redirect("/")
     else:
         return render_template("addExpense.html")
 

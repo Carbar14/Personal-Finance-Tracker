@@ -42,6 +42,7 @@
           name="quantity"
           id="quantity"
           min="1"
+          required
         />
       </div>
       <div class="mb-3">
@@ -54,11 +55,18 @@
           class="form-control"
           name="price"
           id="price"
+          required
         />
       </div>
       <div class="mb-3">
         <label for="date" class="form-label">Date</label>
-        <input type="text" class="form-control" name="date" id="date" />
+        <input
+          type="date"
+          class="form-control"
+          name="date"
+          id="date"
+          required
+        />
       </div>
       <button type="submit" class="btn btn-primary">Add</button>
     </form>
