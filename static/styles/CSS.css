@@ -4,6 +4,7 @@
   padding: 15px;
   flex-direction: column;
   color: aliceblue;
+  max-width: 100vw;
 }
 
 .center {
