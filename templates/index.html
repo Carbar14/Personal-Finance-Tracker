@@ -3,6 +3,7 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center">
+  {% if expenses -%}
   <h2>Summary</h2>
   <div class="table-responsive">
     <table class="table table-dark table-striped table-bordered table-hover">
@@ -21,12 +22,21 @@
         <td>{{ expense["description"] }}</td>
         <td>{{ expense["purchaseLocation"] }}</td>
         <td>{{ expense["quantity"] }}</td>
-        <td>{{ expense["price"] }}</td>
+        <td>${{ expense["price"] }}</td>
         <td>{{ expense["date"] }}</td>
       </tr>
       {% endfor %}
     </table>
   </div>
+  {% else -%}
+  <h3>Sorry</h3>
+  <p>
+    You have no expenses/income to display here. To add expenses go
+    <a href="/add-expense">here</a> and to add income go
+    <a href="/add-income">here</a>. In the future, use the links in the
+    navigation bar on the top!
+  </p>
+  {% endif %}
 </div>
 
 {%endblock %}

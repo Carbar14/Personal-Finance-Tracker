@@ -1,14 +1,54 @@
+<!-- layout -->
 {% extends "layout.html" %}
-
-<!-- Title -->
-{% block title %}Add Income{% endblock %}
 
 <!-- Main -->
 {% block body %}
 
 <div class="cont center">
   <h2 style="padding-left: 5px">Add Income</h2>
-  <div class="formBox"></div>
+  <div class="formBox">
+    <form action="/add-income" method="post">
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" class="form-control" name="category" id="category" />
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input
+          type="text"
+          class="form-control"
+          name="description"
+          id="description"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="method" class="form-label">Method</label>
+        <input type="text" class="form-control" name="method" id="method" />
+      </div>
+      <div class="mb-3">
+        <label for="income" class="form-label">Income ($)</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          class="form-control"
+          name="income"
+          id="income"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input
+          type="date"
+          class="form-control"
+          name="date"
+          id="date"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+  </div>
 </div>
-
 {% endblock %}
