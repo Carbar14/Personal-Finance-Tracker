@@ -1,125 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Finance Traker: Register</title>
+{% extends "base.html" %} {% block body %}
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Personal Finance Tracker</a>
+  </div>
+</nav>
+<!-- END NAVBAR-->
 
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Boostrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      crossorigin="anonymous"
-    />
-    <!-- My Css-->
-    <link rel="stylesheet" href="../static/styles/CSS.css" />
-  </head>
-  <body id="body">
-    <!-- Bootstrap Javascript -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"
-    ></script>
-
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">Personal Finance Tracker</a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/add-expense">Add Expense</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/add-income">Add Income</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-            </li>
-          </ul>
-        </div>
-        <div class="navbar-nav flex-end">
-          <a class="nav-link" href="/login">Log Out</a>
-        </div>
+<!-- MAIN BLOCK -->
+<!-- container -->
+<div class="cont center" style="width: 80vw; max-width: 300px">
+  <h2 style="padding-left: 5px">Register</h2>
+  <div class="formBox">
+    <!-- display alerts -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert" style="color: red">{{ message }}</div>
+    {% endfor %}
+    <form action="/register" method="post">
+      <!-- username  -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" id="username" />
       </div>
-    </nav>
-    <!-- END NAVBAR-->
 
-    <!-- MAIN BLOCK -->
-    <!-- container -->
-    <div class="cont center" style="width: 80vw; max-width: 300px">
-      <h2 style="padding-left: 5px">Register</h2>
-      <div class="formBox">
-        <!-- display alerts -->
-        {% for message in get_flashed_messages() %}
-        <div class="alert" style="color: red">{{ message }}</div>
-        {% endfor %}
-        <form action="/register" method="post">
-          <!-- username  -->
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input
-              type="text"
-              class="form-control"
-              name="username"
-              id="username"
-            />
-          </div>
-
-          <!-- password -->
-          <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              name="password"
-              id="password"
-            />
-          </div>
-
-          <!-- password check -->
-          <div class="mb-3">
-            <label for="password" class="form-label">Re-Enter Password</label>
-            <input
-              type="password"
-              class="form-control"
-              name="passwordCheck"
-              id="password"
-            />
-          </div>
-
-          <!-- checkbox  -->
-          <div class="mb-3 form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="exampleCheck1"
-              name="keepSignedIn"
-            />
-            <label class="form-check-label" for="exampleCheck1"
-              >Keep me signed in.</label
-            >
-          </div>
-          <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+      <!-- password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          id="password"
+        />
       </div>
-      <form action="/login" style="padding: 1vw">
-        Already have an account?
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
-    </div>
-  </body>
-</html>
+
+      <!-- password check -->
+      <div class="mb-3">
+        <label for="passwordCheck" class="form-label">Re-Enter Password</label>
+        <input
+          type="password"
+          class="form-control"
+          name="passwordCheck"
+          id="passwordCheck"
+        />
+      </div>
+
+      <!-- checkbox  -->
+      <div class="mb-3 form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="exampleCheck1"
+          name="keepSignedIn"
+        />
+        <label class="form-check-label" for="exampleCheck1"
+          >Keep me signed in.</label
+        >
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+  <form action="/login" style="padding: 1vw">
+    Already have an account?
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+</div>
+{% endblock %}
