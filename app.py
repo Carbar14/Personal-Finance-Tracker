@@ -22,8 +22,9 @@ Session(app)
 def index():
     conn = get_db_connection()
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    inc = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
     conn.close()
-    return render_template("index.html", expenses=exps)
+    return render_template("index.html", expenses=exps, incomes=inc)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -126,4 +127,19 @@ def addExpense():
 @app.route("/add-income", methods=["GET", "POST"])
 @login_required
 def addIncome():
-    return render_template("addIncome.html")
+     conn = get_db_connection()
+
+     if request.method == "POST":
+        userId = session["user_id"]
+        category = request.form.get("category")
+        description = request.form.get("description")
+        method = request.form.get("method")
+        income = float(request.form.get("income"))
+        date = request.form.get("date")
+
+        conn.execute("INSERT INTO incomes (user_id, category, description, method, income, date) VALUES (?, ?, ?, ?, ?, ?)", (userId, category, description, method, income, date))
+        conn.commit()
+        conn.close()
+        return redirect("/")
+     else:
+        return render_template("addIncome.html")

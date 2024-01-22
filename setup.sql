@@ -7,4 +7,5 @@ DROP TABLE IF EXISTS expenses;
 CREATE TABLE expenses (id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL, category TEXT, description TEXT, purchaseLocation TEXT, quantity INTEGER NOT NULL, price NUMERIC NOT NULL, date TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id));
 
 
-DROP TABLE IF EXISTS income;
+DROP TABLE IF EXISTS incomes;
+CREATE TABLE incomes (id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL, category TEXT, description TEXT, method TEXT, income NUMERIC NOT NULL, date TEXT NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id))
