@@ -143,3 +143,18 @@ def addIncome():
         return redirect("/")
      else:
         return render_template("addIncome.html")
+     
+
+@app.route("/analyzeExpenses", methods=["GET", "POST"])
+@login_required
+def analyze():
+    conn = get_db_connection()
+    categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    print(categories[0]["category"])
+    if request.method == "POST":
+        print()
+   
+
+
+    return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations)
