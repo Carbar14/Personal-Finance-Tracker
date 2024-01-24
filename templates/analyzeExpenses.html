@@ -4,23 +4,71 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center">
-  <div>
+  <div class="formBox">
     <h2>Filters</h2>
+
     <form action="/analyzeExpenses" method="post">
-      <label for="category">Choose Category:</label>
-      <select name="category" id="category">
-        {% for category in categories %}
-        <option value="{{category["category"]}}">{{category["category"]}}</option>
-        {% endfor %}
-      </select>
-      <label for="purchaseLocation">Choose Purchase Location:</label>
-      <select name="purchaseLocation" id="purchaseLocation">
-        {% for purchaseLocation in purchaseLocations %}
-        <option value="{{purchaseLocation["purchaseLocation"]}}">{{purchaseLocation["purchaseLocation"]}}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Search</button>
+      <!-- category  -->
+      <div class="mb-3">
+        <label for="category">Choose Category:</label>
+        <select name="category" id="category" class="form-select">
+          <option></option>
+          {% for category in categories %}
+          <option value="{{category["category"]}}">{{category["category"]}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    <!-- purchaseLocation  -->
+      <div class="mb-3">
+        <label for="purchaseLocation">Choose Purchase Location:</label>
+        <select name="purchaseLocation" id="purchaseLocation" class="form-select">
+          <option></option>
+          {% for purchaseLocation in purchaseLocations %}
+          <option value="{{purchaseLocation["purchaseLocation"]}}">{{purchaseLocation["purchaseLocation"]}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- keyword -->
+      <div class="mb-3">
+        <label for="keywords">Description Keywords:</label>
+        <input type="text" name="keywords" id="keywords">
+      </div>
+
+      <!-- search button  -->
+      <button type="submit" class="btn btn-primary">Search</button>
     </form>
+  </div>
+  <br>
+  <div>
+    <div>
+      <h2>Expenses</h2>
+      <div class="table-responsive">
+        <table class="table table-dark table-striped table-bordered table-hover">
+          <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Purchase Location</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Date</th>
+          </tr>
+  
+          {% for expense in expenses %}
+          <tr>
+            <td>{{ expense["category"] }}</td>
+            <td>{{ expense["description"] }}</td>
+            <td>{{ expense["purchaseLocation"] }}</td>
+            <td>{{ expense["quantity"] }}</td>
+            <td>${{ expense["price"] }}</td>
+            <td>{{ expense["date"] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    <div>
   </div>
 </div>
 {% endblock %}
