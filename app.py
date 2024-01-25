@@ -151,15 +151,16 @@ def analyze():
     conn = get_db_connection()
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    
+    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],))
     if request.method == "POST":
         
 
         # get filter selections
         categoryFilter = request.form.get("category")
         purchaseLocationFilter = request.form.get("purchaseLocation")
-        keywords = request.form.get("keywords")
+        keywordsFilter = request.form.get("keywords")
+        dateFilter = request.form.get("date")
         
-        exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywords, f'%{keywords}%'))
-
-
+        exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter))
     return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps)
