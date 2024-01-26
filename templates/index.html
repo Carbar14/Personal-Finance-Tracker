@@ -23,7 +23,7 @@
           <td>{{ expense["description"] }}</td>
           <td>{{ expense["purchaseLocation"] }}</td>
           <td>{{ expense["quantity"] }}</td>
-          <td>${{ expense["price"] }}</td>
+          <td>{{ "$%.2f"| format(expense["price"]) }}</td>
           <td>{{ expense["date"] }}</td>
         </tr>
         {% endfor %}
@@ -47,7 +47,7 @@
           <td>{{ income["category"] }}</td>
           <td>{{ income["description"] }}</td>
           <td>{{ income["method"] }}</td>
-          <td>${{ income["income"] }}</td>
+          <td>{{ "$%.2f"| format(income["income"]) }}</td>
           <td>{{ income["date"] }}</td>
         </tr>
         {% endfor %}

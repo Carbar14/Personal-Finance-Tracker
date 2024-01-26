@@ -147,12 +147,13 @@ def addIncome():
 
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required
-def analyze():
+def analyzeExpenses():
     conn = get_db_connection()
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     
-    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],))
+    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
     if request.method == "POST":
         
 
@@ -162,5 +163,28 @@ def analyze():
         keywordsFilter = request.form.get("keywords")
         dateFilter = request.form.get("date")
         
-        exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter))
-    return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps)
+        exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
+        total = conn.execute("SELECT SUM(income) AS sum FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
+    return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
+
+@app.route("/analyzeIncome", methods=["GET", "POST"])
+@login_required
+def analyzeIncome():
+    conn = get_db_connection()
+    categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    methods = conn.execute("SELECT DISTINCT method FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    
+    incs = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
+    if request.method == "POST":
+        
+
+        # get filter selections
+        categoryFilter = request.form.get("category")
+        methodFilter = request.form.get("method")
+        keywordsFilter = request.form.get("keywords")
+        dateFilter = request.form.get("date")
+        
+        incs = conn.execute("SELECT * FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
+        total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
+    return render_template("analyzeIncome.html", categories=categories, methods=methods, incomes=incs, total=total)

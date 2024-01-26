@@ -7,7 +7,7 @@
   <div class="formBox">
     <h2>Filters</h2>
 
-    <form action="/analyzeExpenses" method="post">
+    <form action="/analyzeIncome" method="post">
       <!-- category  -->
       <div class="mb-3">
         <label for="category">Choose Category:</label>
@@ -21,11 +21,11 @@
 
     <!-- purchaseLocation  -->
       <div class="mb-3">
-        <label for="purchaseLocation">Choose Purchase Location:</label>
-        <select name="purchaseLocation" id="purchaseLocation" class="form-select">
+        <label for="method">Choose Payment Method:</label>
+        <select name="method" id="method" class="form-select">
           <option></option>
-          {% for purchaseLocation in purchaseLocations %}
-          <option value="{{purchaseLocation["purchaseLocation"]}}">{{purchaseLocation["purchaseLocation"]}}</option>
+          {% for method in methods %}
+          <option value="{{method["method"]}}">{{method["method"]}}</option>
           {% endfor %}
         </select>
       </div>
@@ -49,36 +49,34 @@
   <br>
   <div>
     <div>
-      <h2>Expenses</h2>
+      <h2>Income</h2>
       <div class="table-responsive">
         <table class="table table-dark table-striped table-bordered table-hover">
           <tr>
             <th scope="col">Category</th>
             <th scope="col">Description</th>
-            <th scope="col">Purchase Location</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Price</th>
+            <th scope="col">Method</th>
+            <th scope="col">Income</th>
             <th scope="col">Date</th>
           </tr>
   
-          {% for expense in expenses %}
+          {% for income in incomes %}
           <tr>
-            <td>{{ expense["category"] }}</td>
-            <td>{{ expense["description"] }}</td>
-            <td>{{ expense["purchaseLocation"] }}</td>
-            <td>{{ expense["quantity"] }}</td>
-            <td>{{ "$%.2f"| format(expense["price"] )}}</td>
-            <td>{{ expense["date"] }}</td>
+            <td>{{ income["category"] }}</td>
+            <td>{{ income["description"] }}</td>
+            <td>{{ income["method"] }}</td>
+            <td>{{ "$%.2f" | format(income["income"]) }}</td>
+            <td>{{ income["date"] }}</td>
           </tr>
           {% endfor %}
         </table>
       </div>
       <table class="table table-dark table-striped table-bordered table-hover">
         <tr>
-          <th scope="col">Total Spent</th>
+          <th scope="col">Total Earned</th>
         </tr>
         <tr>
-          <td>{{"$%.2f"| format(total)}}</td>
+            <td>{{"$%.2f" | format(total)}}</td>
         </tr>
       </table>
     </div>
