@@ -3,6 +3,8 @@ from flask_session import Session
 import sqlite3
 from helpers import login_required, get_db_connection
 from datetime import timedelta
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 app = Flask(__name__)
 
@@ -34,17 +36,38 @@ def login():
     #establish connection to data base
     conn = get_db_connection()
 
+    passwordHasher = PasswordHasher()
+
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-
+        
         if not username:
             flash('Username is required!')
+            conn.commit()
+            conn.close()
+            return render_template("login.html")
         elif not password:
             flash('Password is required!')
+            conn.commit()
+            conn.close()
+            return render_template("login.html")
         elif not conn.execute("SELECT * FROM users WHERE username= ?", username).fetchall():
             flash("Username does not exist!")
-        elif not conn.execute("SELECT * FROM users WHERE username = ? AND hash = ?", (username, password)):
+            conn.commit()
+            conn.close()
+            return render_template("login.html")
+        #hash
+        
+        hash = conn.execute("SELECT hash FROM users WHERE username = ?", (username,)).fetchall()[0]["hash"]
+        ph = PasswordHasher()
+        try:
+            passwordMatches = ph.verify(hash, password)
+        except VerifyMismatchError:
+            passwordMatches = False
+        if ph.check_needs_rehash(hash):
+            conn.execute("INSERT INTO users (hash) VALUES (?) WHERE username = ?", (ph.hash(password), username))
+        if not passwordMatches:
             flash("Password incorrect for that username!")
         else:
             #session the user
@@ -61,18 +84,28 @@ def login():
             conn.commit()
             conn.close()
             return redirect("/")
-
+    conn.commit()
+    conn.close()
     return render_template("login.html")
+
+    
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     #establish connection to data base
     conn = get_db_connection()
 
+
+
     if request.method == "POST":
-        print("a")
+
+        
+
         username = request.form.get("username")
         password = request.form.get("password")
+
+        
+        
         passwordCheck = request.form.get("passwordCheck")
 
         if not username:
@@ -86,8 +119,11 @@ def register():
         elif conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall():
             flash('Username already taken')
         else:
+            #hash
+            passwordHasher = PasswordHasher()
+            hash = passwordHasher.hash(password)
             #registers user
-            conn.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, password))
+            conn.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, hash))
             #sets session
             session["user_id"] = int(conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall()[0]["id"])
             
