@@ -95,17 +95,10 @@ def register():
     #establish connection to data base
     conn = get_db_connection()
 
-
-
     if request.method == "POST":
-
-        
-
         username = request.form.get("username")
         password = request.form.get("password")
 
-        
-        
         passwordCheck = request.form.get("passwordCheck")
 
         if not username:

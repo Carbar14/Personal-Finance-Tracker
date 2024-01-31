@@ -49,6 +49,7 @@
   <br>
   <div>
     <div>
+      {% if incomes -%}
       <h2>Income</h2>
       <div class="table-responsive">
         <table class="table table-dark table-striped table-bordered table-hover">
@@ -79,6 +80,14 @@
             <td>{{"$%.2f" | format(total)}}</td>
         </tr>
       </table>
+      {% else -%}
+      <h3>Sorry</h3>
+        <p>
+          You have no income to display here. To add income go
+          <a href="/add-income">here</a>. In the future, use the links in the
+          navigation bar on the top!
+        </p>
+      {% endif %}
     </div>
     <div>
   </div>

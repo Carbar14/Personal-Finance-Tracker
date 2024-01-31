@@ -49,6 +49,7 @@
   <br>
   <div>
     <div>
+      {% if expenses -%}
       <h2>Expenses</h2>
       <div class="table-responsive">
         <table class="table table-dark table-striped table-bordered table-hover">
@@ -81,6 +82,14 @@
           <td>{{"$%.2f"| format(total)}}</td>
         </tr>
       </table>
+      {% else -%}
+      <h3>Sorry</h3>
+      <p>
+        You have no expenses to display here. To add an expense go
+        <a href="/add-expense">here</a>. In the future, use the links in the
+        navigation bar on the top!
+      </p>
+      {% endif %}
     </div>
     <div>
   </div>

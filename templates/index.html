@@ -3,7 +3,8 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center">
-  {% if expenses or incomes -%}
+  <!-- Expenses  -->
+  {% if expenses -%}
   <div>
     <h2>Expenses</h2>
     <div class="table-responsive">
@@ -30,6 +31,16 @@
       </table>
     </div>
   </div>
+  {% else -%}
+  <p>
+    You have no expenses to display here. To add an expense go
+    <a href="/add-expense">here</a>. In the future, use the links in the
+    navigation bar on the top!
+  </p>
+  {% endif %}
+
+  <!-- INCOMES -->
+  {% if incomes -%}
   <div>
     <h2>Income</h2>
     <div class="table-responsive">
@@ -55,10 +66,8 @@
     </div>
   </div>
   {% else -%}
-  <h3>Sorry</h3>
   <p>
-    You have no expenses/income to display here. To add expenses go
-    <a href="/add-expense">here</a> and to add income go
+    You have no income to display here. To add income go
     <a href="/add-income">here</a>. In the future, use the links in the
     navigation bar on the top!
   </p>
