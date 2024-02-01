@@ -5,6 +5,7 @@ from helpers import login_required, get_db_connection
 from datetime import timedelta
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from datetime import date
 
 app = Flask(__name__)
 
@@ -191,9 +192,26 @@ def analyzeExpenses():
         purchaseLocationFilter = request.form.get("purchaseLocation")
         keywordsFilter = request.form.get("keywords")
         dateFilter = request.form.get("date")
+        fromDateFilter = request.form.get("fromDate")
+        toDateFilter = request.form.get("toDate")
+
+        if dateFilter and (fromDateFilter or toDateFilter):
+            flash("Cannot do from-to date at the same time as a specific date")
+        
+        
+
+
+
+        if fromDateFilter:
+            fD = date.fromisoformat(fromDateFilter)
+        if toDateFilter:
+            tD = date.fromisoformat(toDateFilter)
+        
+
+        
         
         exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
-        total = conn.execute("SELECT SUM(income) AS sum FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
+        total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
     return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
 
 @app.route("/analyzeIncome", methods=["GET", "POST"])

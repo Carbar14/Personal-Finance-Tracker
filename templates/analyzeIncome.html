@@ -4,52 +4,65 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center">
-  <div class="formBox">
-    <h2>Filters</h2>
-
-    <form action="/analyzeIncome" method="post">
-      <!-- category  -->
-      <div class="mb-3">
-        <label for="category">Choose Category:</label>
-        <select name="category" id="category" class="form-select">
-          <option></option>
-          {% for category in categories %}
-          <option value="{{category["category"]}}">{{category["category"]}}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-    <!-- purchaseLocation  -->
-      <div class="mb-3">
-        <label for="method">Choose Payment Method:</label>
-        <select name="method" id="method" class="form-select">
-          <option></option>
-          {% for method in methods %}
-          <option value="{{method["method"]}}">{{method["method"]}}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <!-- keyword -->
-      <div class="mb-3">
-        <label for="keywords">Description Keywords:</label>
-        <input type="text" name="keywords" id="keywords">
-      </div>
-
-      <!-- date -->
-      <div class="mb-3">
-        <label for="date">Date:</label>
-        <input type="date" name="date" id="date">
-      </div>
-
-      <!-- search button  -->
-      <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-  </div>
-  <br>
-  <div>
-    <div>
+  
       {% if incomes -%}
+      <div class="formBox">
+        <h2>Filters</h2>
+    
+        <form action="/analyzeIncome" method="post">
+          <!-- category  -->
+          <div class="mb-3">
+            <label for="category">Choose Category:</label>
+            <select name="category" id="category" class="form-select">
+              <option></option>
+              {% for category in categories %}
+              <option value="{{category["category"]}}">{{category["category"]}}</option>
+              {% endfor %}
+            </select>
+          </div>
+    
+        <!-- purchaseLocation  -->
+          <div class="mb-3">
+            <label for="method">Choose Payment Method:</label>
+            <select name="method" id="method" class="form-select">
+              <option></option>
+              {% for method in methods %}
+              <option value="{{method["method"]}}">{{method["method"]}}</option>
+              {% endfor %}
+            </select>
+          </div>
+    
+          <!-- keyword -->
+          <div class="mb-3">
+            <label for="keywords">Description Keywords:</label>
+            <input type="text" name="keywords" id="keywords">
+          </div>
+    
+          <!-- date -->
+          <div class="mb-3">
+            <label for="date">Date:</label>
+            <input type="date" name="date" id="date">
+          </div>
+    
+          <!-- date range-->
+          <div class="mb-3">
+            <label for="fromDate">From Date:</label>
+            <input type="date" name="fromDate" id="fromDate">
+            <label for="toDate">To Date:</label>
+            <input type="date" name="toDate" id="toDate">
+          </div>
+    
+          <!-- search button  -->
+          <button type="submit" class="btn btn-primary">Search</button>
+    
+          {% for message in get_flashed_messages() %}
+            <div class="alert" style="color: red">{{ message }}</div>
+          {% endfor %}
+        </form>
+      </div>
+      <br>
+      <div>
+        <div>
       <h2>Income</h2>
       <div class="table-responsive">
         <table class="table table-dark table-striped table-bordered table-hover">
@@ -80,6 +93,9 @@
             <td>{{"$%.2f" | format(total)}}</td>
         </tr>
       </table>
+    </div>
+    <div>
+    </div>
       {% else -%}
       <h3>Sorry</h3>
         <p>
@@ -88,8 +104,5 @@
           navigation bar on the top!
         </p>
       {% endif %}
-    </div>
-    <div>
-  </div>
 </div>
 {% endblock %}
