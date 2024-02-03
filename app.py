@@ -212,8 +212,28 @@ def analyzeExpenses():
 
         
         
-        exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
-        total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
+        exps = conn.execute("SELECT * FROM expenses WHERE"\
+                            " user_id = ?"\
+                            " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN date = ? ELSE 1 END"\
+                             " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()
+        total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE"\
+                            " user_id = ?"\
+                            " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN date = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()[0]["sum"]
     return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
 
 # checks if first date is less than second date
@@ -261,6 +281,26 @@ def analyzeIncome():
         if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
             flash("From-date must be less than to-date")
         
-        incs = conn.execute("SELECT * FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
-        total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
+        incs = conn.execute("SELECT * FROM incomes WHERE"\
+                            " user_id = ?"\
+                            " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN method = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN date = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()
+        total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE"\
+                            " user_id = ?"\
+                            " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN method = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN date = ? ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
+                                " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()[0]["sum"]
     return render_template("analyzeIncome.html", categories=categories, methods=methods, incomes=incs, total=total)
