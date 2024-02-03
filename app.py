@@ -182,11 +182,12 @@ def analyzeExpenses():
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     
+
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
     if request.method == "POST":
         
-
+        
         # get filter selections
         categoryFilter = request.form.get("category")
         purchaseLocationFilter = request.form.get("purchaseLocation")
@@ -198,7 +199,6 @@ def analyzeExpenses():
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
-        
 
 
 
@@ -207,12 +207,25 @@ def analyzeExpenses():
         if toDateFilter:
             tD = date.fromisoformat(toDateFilter)
         
+        if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
+            flash("From-date must be less than to-date")
 
         
         
         exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
         total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN purchaseLocation = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
     return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
+
+# checks if first date is less than second date
+def dateIsLessThan(d1, d2):
+    if d1.year > d2.year:
+        return False
+    elif d1.year == d2.year and d1.month > d2.month:
+        return False
+    elif d1.year == d2.year and d1.month == d2.month and d1.day > d2.day:
+        return False
+    return True
+
 
 @app.route("/analyzeIncome", methods=["GET", "POST"])
 @login_required
@@ -231,6 +244,22 @@ def analyzeIncome():
         methodFilter = request.form.get("method")
         keywordsFilter = request.form.get("keywords")
         dateFilter = request.form.get("date")
+        fromDateFilter = request.form.get("fromDate")
+        toDateFilter = request.form.get("toDate")
+
+        if dateFilter and (fromDateFilter or toDateFilter):
+            flash("Cannot do from-to date at the same time as a specific date")
+        
+
+
+
+        if fromDateFilter:
+            fD = date.fromisoformat(fromDateFilter)
+        if toDateFilter:
+            tD = date.fromisoformat(toDateFilter)
+        
+        if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
+            flash("From-date must be less than to-date")
         
         incs = conn.execute("SELECT * FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()
         total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE user_id = ? AND CASE WHEN ? != '' THEN category = ? ELSE 1 END AND CASE WHEN ? != '' THEN method = ? ELSE 1 END AND CASE WHEN ? != '' THEN description LIKE ? ELSE 1 END AND CASE WHEN ? != '' THEN date = ? ELSE 1 END" , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter)).fetchall()[0]["sum"]
