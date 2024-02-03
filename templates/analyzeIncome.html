@@ -4,69 +4,93 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center">
-  
-      
-      <div class="formBox">
-        <h2>Filters</h2>
-    
-        <form action="/analyzeIncome" method="post">
-          <!-- category  -->
-          <div class="mb-3">
-            <label for="category">Choose Category:</label>
-            <select name="category" id="category" class="form-select">
-              <option></option>
-              {% for category in categories %}
-              <option value="{{category["category"]}}">{{category["category"]}}</option>
-              {% endfor %}
-            </select>
-          </div>
-    
-        <!-- purchaseLocation  -->
-          <div class="mb-3">
-            <label for="method">Choose Payment Method:</label>
-            <select name="method" id="method" class="form-select">
-              <option></option>
-              {% for method in methods %}
-              <option value="{{method["method"]}}">{{method["method"]}}</option>
-              {% endfor %}
-            </select>
-          </div>
-    
-          <!-- keyword -->
-          <div class="mb-3">
-            <label for="keywords">Description Keywords:</label>
-            <input type="text" name="keywords" id="keywords">
-          </div>
-    
-          <!-- date -->
-          <div class="mb-3">
-            <label for="date">Date:</label>
-            <input type="date" name="date" id="date">
-          </div>
-    
-          <!-- date range-->
-          <div class="mb-3">
-            <label for="fromDate">From Date:</label>
-            <input type="date" name="fromDate" id="fromDate">
-            <label for="toDate">To Date:</label>
-            <input type="date" name="toDate" id="toDate">
-          </div>
-    
-          <!-- search button  -->
-          <button type="submit" class="btn btn-primary">Search</button>
-    
-          {% for message in get_flashed_messages() %}
-            <div class="alert" style="color: red">{{ message }}</div>
+  <div class="formBox">
+    <h2>Filters</h2>
+
+    <form action="/analyzeIncome" method="post">
+      <!-- category  -->
+      <div class="mb-3">
+        <label for="category">Choose Category:</label>
+        <select name="category" id="category" class="form-select">
+          <option></option>
+          {% for category in categories %}
+          <option value="{{category['category']}}">
+            {{category['category']}}
+          </option>
           {% endfor %}
-        </form>
+        </select>
       </div>
-      <br>
-      {% if incomes -%}
-      <div>
-        <div>
+
+      <!-- purchaseLocation  -->
+      <div class="mb-3">
+        <label for="method">Choose Payment Method:</label>
+        <select name="method" id="method" class="form-select">
+          <option></option>
+          {% for method in methods %}
+          <option value="{{method['method']}}">{{method['method']}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- keyword -->
+      <div class="mb-3">
+        <label for="keywords">Description Keywords:</label>
+        <input type="text" name="keywords" id="keywords" />
+      </div>
+
+      <!-- date -->
+      <div class="mb-3">
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" />
+      </div>
+
+      <!-- date range-->
+      <div class="mb-3">
+        <label for="fromDate">From Date:</label>
+        <input type="date" name="fromDate" id="fromDate" />
+        <label for="toDate">To Date:</label>
+        <input type="date" name="toDate" id="toDate" />
+      </div>
+
+      <!-- Price range-->
+      <div class="mb-3">
+        <label for="fromPrice">From Price:</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          class="form-control"
+          name="fromPrice"
+          id="fromPrice"
+        />
+        <label for="toPrice">To Price:</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          class="form-control"
+          name="toPrice"
+          id="toPrice"
+        />
+      </div>
+
+      <!-- search button  -->
+      <button type="submit" class="btn btn-primary">Search</button>
+
+      {% for message in get_flashed_messages() %}
+      <div class="alert" style="color: red">{{ message }}</div>
+      {% endfor %}
+    </form>
+  </div>
+  <br />
+  {% if incomes -%}
+  <div>
+    <div>
       <h2>Income</h2>
       <div class="table-responsive">
-        <table class="table table-dark table-striped table-bordered table-hover">
+        <table
+          class="table table-dark table-striped table-bordered table-hover"
+        >
           <tr>
             <th scope="col">Category</th>
             <th scope="col">Description</th>
@@ -74,7 +98,7 @@
             <th scope="col">Income</th>
             <th scope="col">Date</th>
           </tr>
-  
+
           {% for income in incomes %}
           <tr>
             <td>{{ income["category"] }}</td>
@@ -91,19 +115,19 @@
           <th scope="col">Total Earned</th>
         </tr>
         <tr>
-            <td>{{"$%.2f" | format(total)}}</td>
+          <td>{{"$%.2f" | format(total)}}</td>
         </tr>
       </table>
     </div>
-    <div>
-    </div>
-      {% else -%}
-      <h3>Sorry</h3>
-        <p>
-          You have no income to display here. To add income go
-          <a href="/add-income">here</a>. In the future, use the links in the
-          navigation bar on the top!
-        </p>
-      {% endif %}
+    <div></div>
+    {% else -%}
+    <h3>Sorry</h3>
+    <p>
+      You have no income to display here. To add income go
+      <a href="/add-income">here</a>. In the future, use the links in the
+      navigation bar on the top!
+    </p>
+    {% endif %}
+  </div>
+  {% endblock %}
 </div>
-{% endblock %}

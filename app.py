@@ -195,11 +195,14 @@ def analyzeExpenses():
         dateFilter = request.form.get("date")
         fromDateFilter = request.form.get("fromDate")
         toDateFilter = request.form.get("toDate")
+        fromPriceFilter = request.form.get("fromPrice")
+        toPriceFilter = request.form.get("toPrice")
 
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
-
+        if float(fromPriceFilter) > float(toPriceFilter):
+            flash("From-price must be smaller than to-price")
 
 
         if fromDateFilter:
@@ -266,11 +269,14 @@ def analyzeIncome():
         dateFilter = request.form.get("date")
         fromDateFilter = request.form.get("fromDate")
         toDateFilter = request.form.get("toDate")
+        fromPriceFilter = request.form.get("fromPrice")
+        toPriceFilter = request.form.get("toPrice")
 
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
-
+        if float(fromPriceFilter) > float(toPriceFilter):
+            flash("From-price must be smaller than to-price")
 
 
         if fromDateFilter:
