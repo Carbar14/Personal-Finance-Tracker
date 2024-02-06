@@ -201,7 +201,7 @@ def analyzeExpenses():
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
-        if float(fromPriceFilter) > float(toPriceFilter):
+        if (fromPriceFilter and toPriceFilter) and float(fromPriceFilter) > float(toPriceFilter):
             flash("From-price must be smaller than to-price")
 
 
@@ -213,6 +213,13 @@ def analyzeExpenses():
         if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
             flash("From-date must be less than to-date")
 
+        floatedFromPriceFilter = 0
+        if fromPriceFilter:
+            floatedFromPriceFilter = float(fromPriceFilter)
+        
+        floatedToPriceFilter = 0
+        if toPriceFilter:
+            floatedToPriceFilter = float(toPriceFilter)
         
         
         exps = conn.execute("SELECT * FROM expenses WHERE"\
@@ -224,8 +231,13 @@ def analyzeExpenses():
                              " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()
+                                #, fromPriceFilter, toPriceFilter, float(fromPriceFilter), float(toPriceFilter), fromPriceFilter, toPriceFilter, float(fromPriceFilter), fromPriceFilter, toPriceFilter, float(toPriceFilter)
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter , fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()
         total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -235,8 +247,12 @@ def analyzeExpenses():
                             " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()[0]["sum"]
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
     return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
 
 # checks if first date is less than second date
@@ -275,7 +291,7 @@ def analyzeIncome():
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
-        if float(fromPriceFilter) > float(toPriceFilter):
+        if (fromPriceFilter and toPriceFilter) and float(fromPriceFilter) > float(toPriceFilter):
             flash("From-price must be smaller than to-price")
 
 
@@ -286,6 +302,15 @@ def analyzeIncome():
         
         if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
             flash("From-date must be less than to-date")
+
+
+        floatedFromPriceFilter = 0
+        if fromPriceFilter:
+            floatedFromPriceFilter = float(fromPriceFilter)
+        
+        floatedToPriceFilter = 0
+        if toPriceFilter:
+            floatedToPriceFilter = float(toPriceFilter)
         
         incs = conn.execute("SELECT * FROM incomes WHERE"\
                             " user_id = ?"\
@@ -296,8 +321,12 @@ def analyzeIncome():
                             " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()
         total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -307,6 +336,10 @@ def analyzeIncome():
                             " AND CASE WHEN ? != '' AND ? != '' THEN date BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN ? AND '9999-00-00'"\
                                 " WHEN ? != '' AND ? == '' THEN date BETWEEN 0000-00-00  AND ?"\
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
+                                " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter)).fetchall()[0]["sum"]
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
     return render_template("analyzeIncome.html", categories=categories, methods=methods, incomes=incs, total=total)
