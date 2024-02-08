@@ -343,3 +343,10 @@ def analyzeIncome():
                                 " ELSE 1 END"
                             , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
     return render_template("analyzeIncome.html", categories=categories, methods=methods, incomes=incs, total=total)
+
+
+
+@app.route("/pieChart", methods=["GET", "POST"])
+@login_required
+def pieChart():
+    return render_template("pieChart.html")
