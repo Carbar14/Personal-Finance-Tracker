@@ -2,4 +2,57 @@
 {% extends "layout.html" %}
 
 <!-- Main -->
-{% block body %} {% endblock %}
+{% block body %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<div class="cont center" style="width: 100vw; max-width: 1000px">
+  <canvas id="myChart" style="width: 100vw; max-width: 1000px"></canvas>
+
+  <script>
+    const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+    const yValues = [55, 49, 44, 24, 15];
+    const barColors = ["#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145"];
+
+    const data = {
+      labels: xValues,
+      datasets: [
+        {
+          backgroundColor: barColors,
+          data: yValues,
+        },
+      ],
+    };
+
+    const config = {
+      type: "pie",
+      data,
+      options: {
+        title: {
+          display: true,
+          text: "World Wide Wine Production 2018",
+        },
+        plugins: {
+          tooltip: {
+            enabled: true,
+          },
+          datalabels: {
+            formatter: (value, context) => {
+              const datapoints = context.chart.data.datasets[0].data;
+              function totalSum(total, datapoint) {
+                return total + datapoint;
+              }
+              const totalValue = datapoints.reduce(totalSum, 0);
+              const percentageValue = ((value / totalValue) * 100).toFixed(1);
+              return `${percentageValue}%`;
+            },
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    };
+
+    const myChart = new Chart(document.getElementById("myChart"), config);
+  </script>
+</div>
+{% endblock %}
