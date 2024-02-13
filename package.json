@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chartjs-plugin-colorschemes": "^0.4.0",
+    "google-palette": "^1.1.1"
+  }
+}
