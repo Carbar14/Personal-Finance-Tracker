@@ -6,13 +6,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-
+<script type="text/javascript" {{ url_for('static', filename='app.js')}}></script>
 <div class="cont center">
   <canvas id="myChart" style="height: 50vh; max-height: 600px"></canvas>
 
   <script>
-    const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-    const yValues = [55, 49, 44, 24, 15, 15];
+    var exps = {{ expenses | tojson | safe}};
+    var incs = {{ incomes | tojson | safe}};
+
+    console.log(exps);
+    
+    // list of categories for each
+    var expsCategories = exps.map(obj => obj.category);
+    var incsCategories = incs.map(obj => obj.category);
+
+    // list of values for each
+    var expsValues = exps.map(obj => obj.price);
+    var incsValues = incs.map(obj => obj.income);
+
+    //determines whether to display expenses or incomes
+    var displayExps = false;
+    
     const barColors = [
       "rgba(0,0,255,1.0)",
       "rgba(0,0,255,0.8)",
@@ -20,24 +34,33 @@
       "rgba(0,0,255,0.4)",
       "rgba(0,0,255,0.2)",
     ];
-    const data = {
-      labels: xValues,
+    const expsData = {
+      labels: expsCategories,
       datasets: [
         {
           backgroundColor: barColors,
-          data: yValues,
+          data: expsValues,
+        },
+      ],
+    };
+
+    const incsData = {
+      labels: incsCategories,
+      datasets: [
+        {
+          backgroundColor: barColors,
+          data: incsValues,
         },
       ],
     };
 
     const config = {
       type: "pie",
-      data,
+      data: displayExps ? expsData : incsData,
       options: {
         title: {
           responive: true,
-          display: true,
-          text: "World Wide Wine Production 2018",
+          display: false,
         },
         plugins: {
           tooltip: {
