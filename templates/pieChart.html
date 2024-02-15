@@ -8,13 +8,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script type="text/javascript" {{ url_for('static', filename='app.js')}}></script>
 <div class="cont center">
+  <div>
+    <button id="switch" class="btn btn-dark" >Switch to Income</button>
+  </div>
   <canvas id="myChart" style="height: 50vh; max-height: 600px"></canvas>
 
   <script>
     var exps = {{ expenses | tojson | safe}};
     var incs = {{ incomes | tojson | safe}};
 
-    console.log(exps);
     
     // list of categories for each
     var expsCategories = exps.map(obj => obj.category);
@@ -24,8 +26,12 @@
     var expsValues = exps.map(obj => obj.price);
     var incsValues = incs.map(obj => obj.income);
 
+
     //determines whether to display expenses or incomes
-    var displayExps = false;
+    var displayExps = true;
+
+    
+
     
     const barColors = [
       "rgba(0,0,255,1.0)",
@@ -56,7 +62,7 @@
 
     const config = {
       type: "pie",
-      data: displayExps ? expsData : incsData,
+      data: expsData,
       options: {
         title: {
           responive: true,
@@ -84,6 +90,15 @@
     };
 
     const myChart = new Chart(document.getElementById("myChart"), config);
+
+    //button to switch between exps and incs
+    document.getElementById("switch").addEventListener('click', switchVar)
+    function switchVar() {
+      displayExps = !displayExps;
+      config.data = displayExps ? expsData : incsData;
+      document.getElementById("switch").innerHTML = "Switch to " + (displayExps ? 'Income' : "Expenses");
+      myChart.update();
+    }
   </script>
 </div>
 {% endblock %}
