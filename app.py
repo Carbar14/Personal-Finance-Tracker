@@ -357,3 +357,11 @@ def pieChart():
     incsFormatted = [{'category': category, 'income': income} for category, income in incs]
 
     return render_template("pieChart.html", incomes=incsFormatted, expenses=expsFormatted)
+
+
+@app.route("/lineChart", methods=["GET", "POST"])
+@login_required
+def lineChart():
+    conn = get_db_connection()
+
+    return render_template("lineChart.html")
