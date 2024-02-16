@@ -349,4 +349,11 @@ def analyzeIncome():
 @app.route("/pieChart", methods=["GET", "POST"])
 @login_required
 def pieChart():
-    return render_template("pieChart.html")
+    conn = get_db_connection()
+    exps = conn.execute("SELECT category, SUM(price) FROM expenses WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
+    incs = conn.execute("SELECT category, SUM(income) FROM incomes WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
+
+    expsFormatted = [{'category': category, 'price': price} for category, price in exps]
+    incsFormatted = [{'category': category, 'income': income} for category, income in incs]
+
+    return render_template("pieChart.html", incomes=incsFormatted, expenses=expsFormatted)
