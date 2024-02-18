@@ -3,4 +3,36 @@
 
 <!-- Main -->
 
-{% block body %} {% endblock %}
+{% block body %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<div class="cont center">
+  <canvas
+    id="myChart"
+    style="height: 50vh; max-height: 600px; background-color: white"
+  ></canvas>
+
+  <script>
+    var exps = {{ expenses | tojson | safe}};
+    var incs = {{ incomes | tojson | safe}};
+
+    const config = {
+        type: 'line',
+        data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rrgb(35, 149, 142)',
+                fill: false,
+                borderWidth: 1,
+                tension: 0.1
+            }]
+        },
+    }
+
+
+    const myChart = new Chart(document.getElementById("myChart"), config);
+  </script>
+</div>
+{% endblock %}

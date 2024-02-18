@@ -350,7 +350,7 @@ def analyzeIncome():
 @login_required
 def pieChart():
     conn = get_db_connection()
-    exps = conn.execute("SELECT category, SUM(price) FROM expenses WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
+    exps = conn.execute("SELECT category, SUM(price * quantity) FROM expenses WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
     incs = conn.execute("SELECT category, SUM(income) FROM incomes WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
 
     expsFormatted = [{'category': category, 'price': price} for category, price in exps]
@@ -363,5 +363,10 @@ def pieChart():
 @login_required
 def lineChart():
     conn = get_db_connection()
+    exps = conn.execute("SELECT price, date FROM expenses WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
+    incs = conn.execute("SELECT income, date FROM incomes WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
 
-    return render_template("lineChart.html")
+    expsFormatted = [{'price': price, 'date': date} for price, date in exps]
+    incsFormatted = [{'income': income, 'date': date} for income, date in incs]
+
+    return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted)
