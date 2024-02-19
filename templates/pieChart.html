@@ -12,6 +12,22 @@
 <div class="cont center">
   <div>
     <button id="switch" class="btn btn-dark" >Switch to Income</button>
+    <select class="form-select" aria-label="Month">
+      <option selected>Month Filter</option>
+      <option></option>
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
   </div>
   <canvas id="myChart" style="height: 50vh; max-height: 600px"></canvas>
 
@@ -20,6 +36,74 @@
     var incs = {{ incomes | tojson | safe}};
 
     
+    document.addEventListener('DOMContentLoaded', function () {
+      const monthSelect = document.querySelector('select');
+      monthSelect.addEventListener('change', updateChart);
+
+      function updateChart() {
+        const month = monthSelect.value;
+        
+        const updatedExps = getFilteredData(exps, month, 0);
+        const updatedIncs = getFilteredData(incs, month, 0);
+
+        const updatedExpsCategories = updatedExps.map(obj=> obj.category);
+        const updatedIncsCategories = updatedIncs.map(obj=> obj.category);
+
+        const updatedExpsValues = updatedExps.map(obj => obj.price);
+        const updatedIncsValues = updatedIncs.map(obj => obj.income);
+
+        expsData.lables = updatedExpsCategories;
+        expsData.datasets[0].data = updatedExpsValues;
+        
+        incsData.lables = updatedIncsCategories;
+        incsData.datasets[0].data = updatedIncsValues;
+
+        myChart.update();
+      }
+    });
+
+
+    //GET FILTERED DATA
+    //-
+    //-
+     function getFilteredData(data, month, year)
+     {
+      newData = [];
+      if(month || year) {
+        date = new Date(data[0].date);
+        for (const element of data) {
+         date = new Date(element.date);
+         //If there is a year
+         if (year) {
+           //Year matches
+           if (year == date.getFullYear()) {
+             //Is a month and year
+             if (month) {
+               //Year and month Matches
+               if (month == date.getMonth()) {
+                 newData.push(element);
+               }
+             //No month but year matches
+             } else {
+               newData.push(element);
+             }
+           } 
+         //Is month but no year
+         } else if (month) {
+           //month matches
+           if (month == date.getMonth()) {
+             newData.push(element);
+           }
+         }
+        }
+        return newData;
+      } else {
+
+        return data;
+      }
+     }
+
+
     // list of categories for each
     var expsCategories = exps.map(obj => obj.category);
     var incsCategories = incs.map(obj => obj.category);
@@ -33,7 +117,7 @@
     var displayExps = true;
 
     
-
+    
   
     const barColors = [
     "rgba(70, 130, 180, 1.0)", // Steel Blue
