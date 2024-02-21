@@ -9,11 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
 <script type="text/javascript" {{ url_for('static', filename='app.js')}}></script>
-<div class="cont center">
-  <div>
+<div class="cont center-horizontal">
+  <div class="formBox paddingAll">
+    <h4>Filters</h4>
+    <br>
     <button id="switch" class="btn btn-dark" >Switch to Income</button>
-    <select class="form-select dark-select" aria-label="Month">
-      <option selected value="">Month Filter</option>
+    <br>
+    <label for="year" class="form-label">Year Filter</label>
+    <br>
+    <input type="number" id="year" value="" min="1900" max="2100" step="1" class="form-control" style="max-width: 80px; display: inline;">
+    <button id="filterYear" class="btn btn-dark">Filter by Selected Year</button>
+    <button id="clearYearFilter" class="btn btn-dark">Clear Year Filter</button>
+    <button id="currentYear" class="btn btn-dark">Set to Current Year</button>
+    <div style="display: inline; color:rgb(118, 181, 218);" id="yearFilterText">Not Currently Filtering by Year</div>
+    <br>
+    <label for="month" class="form-label">Month Filter</label>
+    <select class="form-select dark-select" aria-label="Month" id="month">
       <option></option>
       <option value="0">January</option>
       <option value="1">February</option>
@@ -32,20 +43,32 @@
 
   <canvas id="myChart" style="height: 50vh; max-height: 600px"></canvas>
 
+
+  <!-- JAVASCRIPT
+  .
+  .
+  -->
   <script>
     var exps = {{ expenses | tojson | safe}};
     var incs = {{ incomes | tojson | safe}};
 
+
+    var yearFilter = null;
+    var monthFilter = null;
     
     document.addEventListener('DOMContentLoaded', function () {
       const monthSelect = document.querySelector('select');
-      monthSelect.addEventListener('change', updateChart);
+      monthSelect.addEventListener('change', function() {
+        monthFilter = monthSelect.value;
+        updateChart(monthFilter, yearFilter)
+      });
+    });
 
-      function updateChart() {
-        const month = monthSelect.value;
+    function updateChart(month, year) {
         
-        const updatedExps = getFilteredData(exps, month, 0);
-        const updatedIncs = getFilteredData(incs, month, 0);
+        
+        const updatedExps = getFilteredData(exps, month, year);
+        const updatedIncs = getFilteredData(incs, month, year);
 
         const updatedExpsCategories = updatedExps.map(obj=> obj.category);
         const updatedIncsCategories = updatedIncs.map(obj=> obj.category);
@@ -62,7 +85,7 @@
 
         myChart.update();
       }
-    });
+
 
 
     //GET FILTERED DATA
@@ -118,8 +141,6 @@
     //determines whether to display expenses or incomes
     var displayExps = true;
 
-    
-    
   
     const barColors = [
     "rgba(70, 130, 180, 1.0)", // Steel Blue
@@ -192,6 +213,27 @@
       config.data = displayExps ? expsData : incsData;
       document.getElementById("switch").innerHTML = "Switch to " + (displayExps ? 'Income' : "Expenses");
       myChart.update();
+    }
+
+
+    document.getElementById("currentYear").addEventListener('click', setCurrentYear)
+    function setCurrentYear() {
+      document.getElementById("year").value = new Date().getFullYear().toString();
+    }
+
+    document.getElementById("filterYear").addEventListener('click', function() {
+      yearFilter = document.getElementById("year").value;
+      if (yearFilter != "") {
+        document.getElementById("yearFilterText").innerHTML = "Currently Filtering by Year: " + yearFilter;
+      }
+      updateChart(monthFilter, yearFilter);
+    })
+    
+    //when clear year filter year filter is set to null
+    document.getElementById("clearYearFilter").addEventListener('click', clearYearFilter)
+    function clearYearFilter() {
+      yearFilter = null;
+      document.getElementById("yearFilterText").innerHTML = "Not Currently Filtering by Year";
     }
   </script>
 </div>

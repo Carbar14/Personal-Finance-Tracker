@@ -37,11 +37,16 @@
 }
 
 .form-select {
-  margin: 5px;
   background-color: #333 !important;
   color: aliceblue !important;
 }
 
-.btn-dark {
-  margin: 5px !important;
+.paddingAll * {
+  padding-top: 10px; /* Adjust the padding value as needed */
+  padding-bottom: 10px; /* Adjust the padding value as needed */
+}
+
+.form-control {
+  background-color: #333 !important;
+  color: aliceblue !important;
 }
