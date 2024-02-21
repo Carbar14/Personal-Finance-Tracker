@@ -12,8 +12,8 @@
 <div class="cont center">
   <div>
     <button id="switch" class="btn btn-dark" >Switch to Income</button>
-    <select class="form-select" aria-label="Month">
-      <option selected>Month Filter</option>
+    <select class="form-select dark-select" aria-label="Month">
+      <option selected value="">Month Filter</option>
       <option></option>
       <option value="0">January</option>
       <option value="1">February</option>
@@ -29,6 +29,7 @@
       <option value="11">December</option>
     </select>
   </div>
+
   <canvas id="myChart" style="height: 50vh; max-height: 600px"></canvas>
 
   <script>
@@ -52,10 +53,11 @@
         const updatedExpsValues = updatedExps.map(obj => obj.price);
         const updatedIncsValues = updatedIncs.map(obj => obj.income);
 
-        expsData.lables = updatedExpsCategories;
+        expsData.labels = updatedExpsCategories;
         expsData.datasets[0].data = updatedExpsValues;
+        console.log(updatedExpsCategories);
         
-        incsData.lables = updatedIncsCategories;
+        incsData.labels = updatedIncsCategories;
         incsData.datasets[0].data = updatedIncsValues;
 
         myChart.update();

@@ -35,3 +35,13 @@
   font-family: "Roboto Mono", monospace;
   color: aliceblue;
 }
+
+.form-select {
+  margin: 5px;
+  background-color: #333 !important;
+  color: aliceblue !important;
+}
+
+.btn-dark {
+  margin: 5px !important;
+}
