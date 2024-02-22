@@ -182,6 +182,14 @@ def analyzeExpenses():
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     
+    categoryFilter = None
+    purchaseLocationFilter = None
+    keywordsFilter = None
+    dateFilter = None
+    fromDateFilter =None
+    toDateFilter = None
+    fromPriceFilter = None
+    toPriceFilter = None
 
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
@@ -253,7 +261,17 @@ def analyzeExpenses():
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
                             , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
-    return render_template("analyzeExpenses.html", categories=categories, purchaseLocations=purchaseLocations, expenses=exps, total=total)
+    elif request.method == "GET":
+        categoryFilter = categoryFilter if categoryFilter is not None else ""
+        purchaseLocationFilter = purchaseLocationFilter if purchaseLocationFilter is not None else ""  
+        keywordsFilter = keywordsFilter if keywordsFilter is not None else ""  
+        dateFilter = dateFilter if dateFilter is not None else ""  
+        fromDateFilter = fromDateFilter if fromDateFilter is not None else ""  
+        toDateFilter = toDateFilter if toDateFilter is not None else ""  
+        fromPriceFilter = fromPriceFilter if fromPriceFilter is not None else ""  
+        toPriceFilter = toPriceFilter if toPriceFilter is not None else ""  
+
+    return render_template("analyzeExpenses.html", categories=categories,purchaseLocations=purchaseLocations,expenses=exps,total=total,categoryFilter=categoryFilter,purchaseLocationFilter=purchaseLocationFilter,keywordsFilter=keywordsFilter,dateFilter=dateFilter,fromDateFilter=fromDateFilter,toDateFilter=toDateFilter,    fromPriceFilter=fromPriceFilter, toPriceFilter=toPriceFilter);
 
 # checks if first date is less than second date
 def dateIsLessThan(d1, d2):
