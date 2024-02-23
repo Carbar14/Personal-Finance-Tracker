@@ -35,42 +35,54 @@
       <!-- keyword -->
       <div class="mb-3">
         <label for="keywords">Description Keywords:</label>
-        <input type="text" name="keywords" id="keywords" />
+        <input
+          type="text"
+          name="keywords"
+          id="keywords"
+          value="keywordFilter"
+        />
       </div>
 
       <!-- date -->
       <div class="mb-3">
         <label for="date">Date:</label>
-        <input type="date" name="date" id="date" />
+        <input type="date" name="date" id="date" value="{{dateFilter}}" />
       </div>
 
       <!-- date range-->
       <div class="mb-3">
         <label for="fromDate">From Date:</label>
-        <input type="date" name="fromDate" id="fromDate" />
+        <input
+          type="date"
+          name="fromDate"
+          id="fromDate"
+          value="{{fromDateFilter}}"
+        />
         <label for="toDate">To Date:</label>
-        <input type="date" name="toDate" id="toDate" />
+        <input type="date" name="toDate" id="toDate" value="{{toDateFilter}}" />
       </div>
 
       <!-- Price range-->
       <div class="mb-3">
-        <label for="fromPrice">From Price:</label>
+        <label for="fromIncome">From Income:</label>
         <input
           type="number"
           step="0.01"
           min="0"
           class="form-control"
-          name="fromPrice"
-          id="fromPrice"
+          name="fromIncome"
+          id="fromIncome"
+          value="{{fromIncomeFilter}}"
         />
-        <label for="toPrice">To Price:</label>
+        <label for="toIncome">To Income:</label>
         <input
           type="number"
           step="0.01"
           min="0"
           class="form-control"
-          name="toPrice"
-          id="toPrice"
+          name="toIncome"
+          id="toIncome"
+          value="{{toIncomeFilter}}"
         />
       </div>
 
