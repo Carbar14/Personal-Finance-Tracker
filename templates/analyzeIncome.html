@@ -14,7 +14,7 @@
         <select name="category" id="category" class="form-select">
           <option></option>
           {% for category in categories %}
-          <option value="{{category['category']}}">
+          <option value="{{category['category']}}" {% if category['category'] == categoryFilter %}selected{% endif %}>
             {{category['category']}}
           </option>
           {% endfor %}
@@ -27,7 +27,7 @@
         <select name="method" id="method" class="form-select">
           <option></option>
           {% for method in methods %}
-          <option value="{{method['method']}}">{{method['method']}}</option>
+          <option value="{{method['method']}}" {% if method['method'] == methodFilter %}selected{% endif %}>{{method['method']}}</option>
           {% endfor %}
         </select>
       </div>
