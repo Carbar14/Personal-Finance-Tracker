@@ -6,33 +6,71 @@
 {% block body %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <div class="cont center">
-  <canvas
-    id="myChart"
-    style="height: 50vh; max-height: 600px; background-color: white"
-  ></canvas>
+  <div class="formBox paddingAll" style="max-width:160px;">
+    <label for="year" class="form-label">Year Select</label>
+    <br />
+    <select class="form-select dark-select" aria-label="Year" id="year" style="max-width:90px;">
+      <option></option>
+      {% for year in years %}
+        <option value="{{year}}">{{ year }}</option>
+      {% endfor %}
+    </select>
+    </div>
 
-  <script>
-    var exps = {{ expenses | tojson | safe}};
-    var incs = {{ incomes | tojson | safe}};
+    <canvas
+      id="myChart"
+      style="height: 50vh; max-height: 600px; background-color: white"
+    ></canvas>
 
-    const config = {
-        type: 'line',
-        data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+    <script>
+      var exps = {{ expenses | tojson | safe}};
+      var incs = {{ incomes | tojson | safe}};
+
+      var sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
+      var sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
+
+
+      
+      for (const element of exps){
+        date = new Date(element.date);
+        sortedExps[date.getMonth()] += element.price;
+      }
+      for (const element of incs){
+        date = new Date(element.date);
+        sortedIncs[date.getMonth()] += element.income;
+      }
+
+
+      console.log(sortedExps);
+      const config = {
+          type: 'line',
+          data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+              datasets: [{
+                  label: 'Expenses',
+                  data: sortedExps,
+
+                  borderColor: 'rgb(192, 75, 75)',
+                  backgroundColor: 'rrgb(35, 149, 142)',
+                  fill: false,
+                  borderWidth: 1,
+                  tension: 0.1
+              },
+              {
+                label: 'Income',
+                data: sortedIncs,
                 borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rrgb(35, 149, 142)',
+                backgroundColor: 'rrgb(142, 149, 35)',
                 fill: false,
                 borderWidth: 1,
                 tension: 0.1
             }]
-        },
-    }
+          },
+      }
 
 
-    const myChart = new Chart(document.getElementById("myChart"), config);
-  </script>
+      const myChart = new Chart(document.getElementById("myChart"), config);
+    </script>
+  </div>
+  {% endblock %}
 </div>
-{% endblock %}

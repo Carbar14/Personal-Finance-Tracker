@@ -5,7 +5,7 @@ from helpers import login_required, get_db_connection
 from datetime import timedelta
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from datetime import date
+from datetime import date, datetime
 
 app = Flask(__name__)
 
@@ -407,4 +407,10 @@ def lineChart():
     expsFormatted = [{'price': price, 'date': date} for price, date in exps]
     incsFormatted = [{'income': income, 'date': date} for income, date in incs]
 
-    return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted)
+    
+    years = set(datetime.strptime(element['date'], "%Y-%m-%d").year for element in (expsFormatted + incsFormatted))
+    sortedYears = sorted(list(years))
+    print(sortedYears)
+
+
+    return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted, years=sortedYears)
