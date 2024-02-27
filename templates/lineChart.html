@@ -6,103 +6,148 @@
 {% block body %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <div class="cont center">
-  <div class="formBox paddingAll" style="max-width:160px;">
-    <label for="year" class="form-label">Year Select</label>
-    <br />
-    <select class="form-select dark-select" aria-label="Year" id="year" style="max-width:90px;">
-      <option value="0">All</option>
-      {% for year in years %}
+  <div class="formBox line-chart-filter-parent">
+    <div class="line-chart-filter">
+      <label for="year" class="form-label">Year Select</label>
+      <br />
+      <select
+        class="form-select dark-select"
+        aria-label="Year"
+        id="year"
+        style="max-width: 90px"
+      >
+        <option value="0">All</option>
+        {% for year in years %}
         <option value="{{year}}">{{ year }}</option>
-      {% endfor %}
-    </select>
+        {% endfor %}
+      </select>
     </div>
 
-    <canvas
-      id="myChart"
-      style="height: 50vh; max-height: 600px; background-color: white"
-    ></canvas>
+    <div class="line-chart-filter">
+      <label for="expsCategoryFilter" class="form-label"
+        >Expense Category Filter</label
+      >
+      <br />
+      <select
+        multiple
+        size="3"
+        class="form-select dark-select"
+        aria-label="expsCategory"
+        id="expsCategory"
+      >
+        <option>All</option>
+        <option>None</option>
+        {% for category in expsCategories %}
+        <option value="{{category}}">{{ category }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var exps = {{ expenses | tojson | safe}};
-        var incs = {{ incomes | tojson | safe}};
+    <div class="line-chart-filter">
+      <label for="incsCategoryFilter" class="form-label"
+        >Income Category Filter</label
+      >
 
-        var sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
-        var sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
+      <select
+        multiple
+        size="3"
+        class="form-select dark-select"
+        aria-label="incsCategoryFilter"
+        id="incsCategoryFilter"
+      >
+        <option>All</option>
+        <option>None</option>
+        {% for category in incsCategories %}
+        <option value="{{category}}">{{ category }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <br />
+  <canvas
+    id="myChart"
+    style="height: 50vh; max-height: 600px; background-color: white"
+  ></canvas>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var exps = {{ expenses | tojson | safe}};
+      var incs = {{ incomes | tojson | safe}};
+
+      var sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
+      var sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,];
 
 
-      
-        for (const element of exps){
-          date = new Date(element.date);
-          sortedExps[date.getMonth()] += element.price;
-        }
-        for (const element of incs){
-          date = new Date(element.date);
-          sortedIncs[date.getMonth()] += element.income;
-        }
 
-      
-      
-      
-      
-      const config = {
-        type: 'line',
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [{
-            label: 'Expenses',
-                  data: sortedExps,
-                  
-                  borderColor: 'rgb(192, 75, 75)',
-                  backgroundColor: 'rrgb(35, 149, 142)',
-                  fill: false,
-                  borderWidth: 1,
-                  tension: 0.1
-                },
-                {
-                  label: 'Income',
-                  data: sortedIncs,
-                  borderColor: 'rgb(75, 192, 192)',
-                  backgroundColor: 'rgb(142, 149, 35)',
-                  fill: false,
-                  borderWidth: 1,
-                  tension: 0.1
-                }]
+      for (const element of exps){
+        date = new Date(element.date);
+        sortedExps[date.getMonth()] += element.price;
+      }
+      for (const element of incs){
+        date = new Date(element.date);
+        sortedIncs[date.getMonth()] += element.income;
+      }
+
+
+
+
+
+    const config = {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [{
+          label: 'Expenses',
+                data: sortedExps,
+
+                borderColor: 'rgb(192, 75, 75)',
+                backgroundColor: 'rrgb(35, 149, 142)',
+                fill: false,
+                borderWidth: 1,
+                tension: 0.1
               },
+              {
+                label: 'Income',
+                data: sortedIncs,
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgb(142, 149, 35)',
+                fill: false,
+                borderWidth: 1,
+                tension: 0.1
+              }]
+            },
+          }
+
+
+          const myChart = new Chart(document.getElementById("myChart"), config);
+
+
+
+          const yearSelect = document.getElementById('year');
+          yearSelect.addEventListener('change', function() {
+
+            yearFilter = yearSelect.value;
+            sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+            sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+
+            for (const element of exps){
+              var date = new Date(element.date);
+              if(yearFilter == 0 || yearFilter == date.getFullYear()){
+                sortedExps[date.getMonth()] += element.price;
+              }
             }
-            
-            
-            const myChart = new Chart(document.getElementById("myChart"), config);
-
-
-
-            const yearSelect = document.getElementById('year');
-            yearSelect.addEventListener('change', function() {
-              
-              yearFilter = yearSelect.value;
-              sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-              sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-              
-              
-              for (const element of exps){
-                var date = new Date(element.date);
-                if(yearFilter == 0 || yearFilter == date.getFullYear()){
-                  sortedExps[date.getMonth()] += element.price;
-                }
+            for (const element of incs){
+              var date = new Date(element.date);
+              if(yearFilter == 0 || yearFilter == date.getFullYear()){
+                sortedIncs[date.getMonth()] += element.income;
               }
-              for (const element of incs){
-                var date = new Date(element.date);
-                if(yearFilter == 0 || yearFilter == date.getFullYear()){
-                  sortedIncs[date.getMonth()] += element.income;
-                }
-              }
-              myChart.data.datasets[0].data = sortedExps;
-              myChart.data.datasets[1].data = sortedIncs;
-              myChart.update();
-            });
+            }
+            myChart.data.datasets[0].data = sortedExps;
+            myChart.data.datasets[1].data = sortedIncs;
+            myChart.update();
           });
-        </script>
-      </div>
-      {% endblock %}
-    </div>
-    
+        });
+  </script>
+</div>
+{% endblock %}

@@ -407,7 +407,8 @@ def lineChart():
     expsFormatted = [{'price': price, 'date': date} for price, date in exps]
     incsFormatted = [{'income': income, 'date': date} for income, date in incs]
 
-    
+    #expsCategories = conn.execute("SELECT category from expenses")
+
     years = set(datetime.strptime(element['date'], "%Y-%m-%d").year for element in (expsFormatted + incsFormatted))
     sortedYears = sorted(list(years))
     print(sortedYears)

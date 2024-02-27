@@ -27,7 +27,7 @@
 .formBox {
   border: 5px solid rgb(8, 0, 61);
   border-radius: 15px;
-  padding: 15px;
+  padding: 10px;
 }
 
 #body {
@@ -49,4 +49,18 @@
 .form-control {
   background-color: #333 !important;
   color: aliceblue !important;
+}
+
+.line-chart-filter {
+  width: 30%;
+  padding: 10px;
+  margin: 5px;
+}
+
+.line-chart-filter-parent {
+  max-width: 90vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: nowrap;
 }
