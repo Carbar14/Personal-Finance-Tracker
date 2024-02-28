@@ -5,6 +5,7 @@
   flex-direction: column;
   color: aliceblue;
   max-width: 100vw;
+  max-height: 95vh;
 }
 
 .center {
@@ -51,8 +52,10 @@
   color: aliceblue !important;
 }
 
+/* LINE CHART */
+
 .line-chart-filter {
-  width: 30%;
+  width: 33%;
   padding: 10px;
   margin: 5px;
 }

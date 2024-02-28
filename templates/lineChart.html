@@ -30,15 +30,17 @@
       <br />
       <select
         multiple
-        size="3"
+        size="5"
         class="form-select dark-select"
         aria-label="expsCategory"
-        id="expsCategory"
+        id="expsCategoryFilter"
       >
-        <option>All</option>
+        <option selected>All</option>
         <option>None</option>
         {% for category in expsCategories %}
-        <option value="{{category}}">{{ category }}</option>
+        <option value="{{category['category']}}">
+          {{ category["category"] }}
+        </option>
         {% endfor %}
       </select>
     </div>
@@ -50,15 +52,17 @@
 
       <select
         multiple
-        size="3"
+        size="5"
         class="form-select dark-select"
         aria-label="incsCategoryFilter"
         id="incsCategoryFilter"
       >
-        <option>All</option>
+        <option selected>All</option>
         <option>None</option>
         {% for category in incsCategories %}
-        <option value="{{category}}">{{ category }}</option>
+        <option value="{{category['category']}}">
+          {{ category["category"] }}
+        </option>
         {% endfor %}
       </select>
     </div>
@@ -92,8 +96,8 @@
 
 
 
-    const config = {
-      type: 'line',
+      const config = {
+        type: 'line',
       data: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [{
@@ -124,30 +128,87 @@
 
 
           const yearSelect = document.getElementById('year');
-          yearSelect.addEventListener('change', function() {
+          yearSelect.addEventListener('change', upData);
 
-            yearFilter = yearSelect.value;
+          const expsCategoryFilterSelect = document.getElementById('expsCategoryFilter');
+          const incsCategoryFilterSelect = document.getElementById('incsCategoryFilter');
+          expsCategoryFilterSelect.addEventListener('change', upData);
+          incsCategoryFilterSelect.addEventListener('change', upData);
+
+          function upData() {
+            var yearFilter = yearSelect.value;
+            var expsCategoryFilters = Array.from(expsCategoryFilterSelect.selectedOptions).map(option => option.value);
+            var incsCategoryFilters = Array.from(incsCategoryFilterSelect.selectedOptions).map(option => option.value);
+
+
+
+            var filteredExps = [];
+            var filteredIncs = [];
+
+            for (let filter of expsCategoryFilters) {
+
+              if(filter == "All"){
+                clearSelection(expsCategoryFilterSelect);
+                expsCategoryFilterSelect.options[0].selected = true;
+                filteredExps = exps;
+                break;
+              } else if(filter == "None"){
+                clearSelection(expsCategoryFilterSelect);
+                expsCategoryFilterSelect.options[1].selected = true;
+                break;
+              } else {
+                filteredExps.push(...exps.filter(exps => exps.category === filter));
+              }
+            };
+
+            for (let filter of incsCategoryFilters) {
+              if(filter == "All"){
+                clearSelection(incsCategoryFilterSelect);
+                incsCategoryFilterSelect.options[0].selected = true;
+                filteredIncs = incs;
+                break;
+              } else if(filter == "None"){
+                clearSelection(incsCategoryFilterSelect);
+                incsCategoryFilterSelect.options[1].selected = true;
+                break;
+              } else {
+                filteredIncs.push(...incs.filter(inc => inc.category === filter));
+              }
+            };
+
+
+
             sortedExps = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
             sortedIncs = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
-
-            for (const element of exps){
+            for (const element of filteredExps){
               var date = new Date(element.date);
               if(yearFilter == 0 || yearFilter == date.getFullYear()){
                 sortedExps[date.getMonth()] += element.price;
               }
             }
-            for (const element of incs){
+            for (const element of filteredIncs){
               var date = new Date(element.date);
               if(yearFilter == 0 || yearFilter == date.getFullYear()){
                 sortedIncs[date.getMonth()] += element.income;
               }
             }
+
+
+
+
+
             myChart.data.datasets[0].data = sortedExps;
             myChart.data.datasets[1].data = sortedIncs;
             myChart.update();
-          });
-        });
+          }
+
+          //Clear Selection
+          function clearSelection(selectElement) {
+            // Clear the selection in the specified select element
+            Array.from(selectElement.options).forEach(option => option.selected = false);
+          }
+      });
   </script>
 </div>
 {% endblock %}

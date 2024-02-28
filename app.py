@@ -401,17 +401,18 @@ def pieChart():
 @login_required
 def lineChart():
     conn = get_db_connection()
-    exps = conn.execute("SELECT price, date FROM expenses WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
-    incs = conn.execute("SELECT income, date FROM incomes WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
+    exps = conn.execute("SELECT price, category, date FROM expenses WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
+    incs = conn.execute("SELECT income, category, date FROM incomes WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
 
-    expsFormatted = [{'price': price, 'date': date} for price, date in exps]
-    incsFormatted = [{'income': income, 'date': date} for income, date in incs]
+    expsFormatted = [{'price': price, 'category' : category, 'date': date} for price, category, date in exps]
+    incsFormatted = [{'income': income, 'category' : category, 'date': date} for income, category, date in incs]
 
-    #expsCategories = conn.execute("SELECT category from expenses")
+    expsCategories = conn.execute("SELECT DISTINCT category from expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    incsCategories = conn.execute("SELECT DISTINCT category from incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
 
     years = set(datetime.strptime(element['date'], "%Y-%m-%d").year for element in (expsFormatted + incsFormatted))
     sortedYears = sorted(list(years))
     print(sortedYears)
 
 
-    return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted, years=sortedYears)
+    return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted, years=sortedYears, expsCategories=expsCategories, incsCategories=incsCategories)
