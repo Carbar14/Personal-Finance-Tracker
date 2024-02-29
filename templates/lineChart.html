@@ -5,6 +5,10 @@
 
 {% block body %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<link
+  href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+  rel="stylesheet"
+/>
 <div class="cont center">
   <div class="formBox line-chart-filter-parent">
     <div class="line-chart-filter">
@@ -21,6 +25,15 @@
         <option value="{{year}}">{{ year }}</option>
         {% endfor %}
       </select>
+
+      <div class="info-container">
+        <i class="icon-info-sign info-icon"></i>
+
+        <div class="info-text">
+          Year Select "All" will combine everything in each month over all the
+          years.
+        </div>
+      </div>
     </div>
 
     <div class="line-chart-filter">
@@ -65,6 +78,14 @@
         </option>
         {% endfor %}
       </select>
+    </div>
+
+    <div class="info-container">
+      <i class="icon-info-sign info-icon"></i>
+
+      <div class="info-text">
+        Select multiple categories by holding the CTRL key and clicking.
+      </div>
     </div>
   </div>
   <br />
