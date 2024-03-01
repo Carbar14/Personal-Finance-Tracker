@@ -14,7 +14,7 @@
         <select name="category" id="category" class="form-select">
           <option></option>
           {% for category in categories %}
-          <option value="{{category['category']}}" {% if category['category'] == categoryFilter %}selected{% endif %}>
+          <option value="{{category['category']}}" {% if category["category"] == categoryFilter %}selected{% endif %}>
             {{category['category']}}
           </option>
           {% endfor %}
@@ -39,8 +39,15 @@
           type="text"
           name="keywords"
           id="keywords"
-          value="keywordFilter"
+          value="{{keywordFilter}}"
         />
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+  
+          <div class="info-text">
+            Looks for keyword(s) in description.
+          </div>
+        </div>
       </div>
 
       <!-- date -->

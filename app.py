@@ -53,7 +53,7 @@ def login():
             conn.commit()
             conn.close()
             return render_template("login.html")
-        elif not conn.execute("SELECT * FROM users WHERE username= ?", username).fetchall():
+        elif not conn.execute("SELECT * FROM users WHERE username= ?", (username,)).fetchall():
             flash("Username does not exist!")
             conn.commit()
             conn.close()
@@ -62,6 +62,8 @@ def login():
         
         hash = conn.execute("SELECT hash FROM users WHERE username = ?", (username,)).fetchall()[0]["hash"]
         ph = PasswordHasher()
+
+        print()
         try:
             passwordMatches = ph.verify(hash, password)
         except VerifyMismatchError:
@@ -72,7 +74,7 @@ def login():
             flash("Password incorrect for that username!")
         else:
             #session the user
-            session["user_id"] = conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall()[0]["id"]
+            session["user_id"] = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()[0]["id"]
 
             #Keep signed in
             if not bool(request.form.get("keepSignedIn")):
@@ -119,7 +121,7 @@ def register():
             #registers user
             conn.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, hash))
             #sets session
-            session["user_id"] = int(conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall()[0]["id"])
+            session["user_id"] = int(conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()[0]["id"])
             
             #Keep signed in
             if not bool(request.form.get("keepSignedIn")):

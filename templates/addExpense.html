@@ -4,7 +4,7 @@
 <!-- Main -->
 {% block body %}
 
-<div class="cont center">
+<div class="cont center-small-form">
   <h2 style="padding-left: 5px">Add Expense</h2>
   <div class="formBox">
     <form action="/add-expense" method="post">
@@ -33,7 +33,9 @@
         />
       </div>
       <div class="mb-3">
-        <label for="quantity" class="form-label"> Quantity </label>
+        <label for="quantity" class="form-label">
+          Quantity <span class="red">*</span></label
+        >
         <input
           type="number"
           class="form-control"
@@ -44,7 +46,9 @@
         />
       </div>
       <div class="mb-3">
-        <label for="price" class="form-label">Price ($)</label>
+        <label for="price" class="form-label"
+          >Price ($) <span class="red">*</span></label
+        >
 
         <input
           type="number"
@@ -57,7 +61,9 @@
         />
       </div>
       <div class="mb-3">
-        <label for="date" class="form-label">Date</label>
+        <label for="date" class="form-label"
+          >Date <span class="red">*</span></label
+        >
         <input
           type="date"
           class="form-control"

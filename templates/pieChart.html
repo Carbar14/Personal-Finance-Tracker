@@ -14,15 +14,16 @@
     <h4>Filters</h4>
     <br>
     <button id="switch" class="btn btn-dark" >Switch to Income</button>
-    <br>
+    <br><br>
     <label for="year" class="form-label">Year Filter</label>
     <br>
     <input type="number" id="year" value="" min="1900" max="2100" step="1" class="form-control" style="max-width: 80px; display: inline;">
     <button id="filterYear" class="btn btn-dark">Filter by Selected Year</button>
     <button id="clearYearFilter" class="btn btn-dark">Clear Year Filter</button>
     <button id="currentYear" class="btn btn-dark">Set to Current Year</button>
-    <div style="display: inline; color:rgb(118, 181, 218);" id="yearFilterText">Not Currently Filtering by Year</div>
     <br>
+    <div style="display: inline; color:rgb(118, 181, 218);" id="yearFilterText">Year Filter Status: Not Currently Filtering by Year</div>
+    <br><br>
     <label for="month" class="form-label">Month Filter</label>
     <select class="form-select dark-select" aria-label="Month" id="month">
       <option></option>
@@ -224,7 +225,7 @@
     document.getElementById("filterYear").addEventListener('click', function() {
       yearFilter = document.getElementById("year").value;
       if (yearFilter != "") {
-        document.getElementById("yearFilterText").innerHTML = "Currently Filtering by Year: " + yearFilter;
+        document.getElementById("yearFilterText").innerHTML = "Year Filter Status: Currently Filtering by Year: " + yearFilter;
       }
       updateChart(monthFilter, yearFilter);
     })
@@ -233,7 +234,7 @@
     document.getElementById("clearYearFilter").addEventListener('click', clearYearFilter)
     function clearYearFilter() {
       yearFilter = null;
-      document.getElementById("yearFilterText").innerHTML = "Not Currently Filtering by Year";
+      document.getElementById("yearFilterText").innerHTML = "Year Filter Status: Not Currently Filtering by Year";
     }
   </script>
 </div>

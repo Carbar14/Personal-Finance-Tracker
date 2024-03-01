@@ -1,3 +1,7 @@
+.red {
+  color: red;
+}
+
 .cont {
   display: flex;
   justify-content: center;
@@ -7,21 +11,21 @@
   max-width: 100vw;
 }
 
-.center {
-  margin: 0;
-  margin-top: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+.navbar-nav {
+  z-index: 1000;
+}
+
+.center-small-form {
+  padding-top: 30px;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .center-horizontal {
   margin: 0 auto; /* This will horizontally center the div */
   width: 90vw; /* Adjust the width as needed */
-  max-width: 700px;
-  padding: 20px;
+  max-width: 800px;
+  padding: 25px;
 }
 
 .formBox {
