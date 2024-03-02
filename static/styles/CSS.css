@@ -28,6 +28,11 @@
   padding: 25px;
 }
 
+.right-div {
+  margin-left: auto;
+  box-sizing: border-box;
+}
+
 .formBox {
   border: 5px solid rgb(8, 0, 61);
   border-radius: 15px;
