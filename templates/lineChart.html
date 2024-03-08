@@ -9,16 +9,18 @@
 <div class="cont center-horizontal">
   <div class="formBox line-chart-filter-parent">
     <div class="line-chart-filter">
-      <label for="year" class="form-label">Year Select</label>
+      <label for="year" class="form-label"
+        >Year Select
 
-      <div class="info-container">
-        <i class="icon-info-sign info-icon"></i>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
 
-        <div class="info-text">
-          Year Select "All" will combine everything in each month over all the
-          years.
+          <div class="info-text">
+            Year Select "All" will combine everything in each month over all the
+            years.
+          </div>
         </div>
-      </div>
+      </label>
 
       <br />
       <select
@@ -58,8 +60,16 @@
 
     <div class="line-chart-filter">
       <label for="incsCategoryFilter" class="form-label"
-        >Income Category Filter</label
-      >
+        >Income Category Filter
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Select multiple categories by holding the CTRL key and clicking (on
+            computer).
+          </div>
+        </div>
+      </label>
 
       <select
         multiple
@@ -77,16 +87,9 @@
         {% endfor %}
       </select>
     </div>
-
-    <div class="info-container">
-      <i class="icon-info-sign info-icon"></i>
-
-      <div class="info-text">
-        Select multiple categories by holding the CTRL key and clicking.
-      </div>
-    </div>
   </div>
   <br />
+
   <canvas
     id="myChart"
     style="height: 50vh; max-height: 600px; background-color: white"
