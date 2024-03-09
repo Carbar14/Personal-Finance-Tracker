@@ -29,7 +29,7 @@ def index():
     #gets all expenses and incomes in variables
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     inc = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
-
+    print(exps[1]["color"])
     conn.close()
     return render_template("index.html", expenses=exps, incomes=inc)
 
@@ -169,9 +169,10 @@ def addExpense():
         quantity = int(request.form.get("quantity"))
         price = float(request.form.get("price"))
         date = request.form.get("date")
+        color = request.form.get("color")
 
         #inserts into database
-        conn.execute("INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date) VALUES (?, ?, ?, ?, ?, ?, ?)", (userId, category, description, purchaseLocation, quantity, price, date))
+        conn.execute("INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (userId, category, description, purchaseLocation, quantity, price, date, color))
 
         conn.commit()
         conn.close()
@@ -193,9 +194,10 @@ def addIncome():
         method = request.form.get("method")
         income = float(request.form.get("income"))
         date = request.form.get("date")
+        color = request.form.get("color")
 
         #inserts into database
-        conn.execute("INSERT INTO incomes (user_id, category, description, method, income, date) VALUES (?, ?, ?, ?, ?, ?)", (userId, category, description, method, income, date))
+        conn.execute("INSERT INTO incomes (user_id, category, description, method, income, date, color) VALUES (?, ?, ?, ?, ?, ?, ?)", (userId, category, description, method, income, date, color))
 
         conn.commit()
         conn.close()

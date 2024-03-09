@@ -51,6 +51,27 @@
           required
         />
       </div>
+
+      <div class="mb-3">
+        <label for="color" class="form-label">Display Color</label>
+        <input
+          type="color"
+          value="#f0f8ff"
+          class="form-control"
+          name="color"
+          id="color"
+          required
+        />
+        <button type="button" class="btn btn-dark" id="defaultColor">
+          Default Color
+        </button>
+        <script>
+          document.getElementById("defaultColor").onclick = function () {
+            document.getElementById("color").value = "#f0f8ff";
+          };
+        </script>
+      </div>
+
       <button type="submit" class="btn btn-primary">Add</button>
     </form>
   </div>

@@ -19,13 +19,19 @@
         </tr>
 
         {% for expense in expenses %}
-        <tr>
-          <td>{{ expense["category"] }}</td>
-          <td>{{ expense["description"] }}</td>
-          <td>{{ expense["purchaseLocation"] }}</td>
-          <td>{{ expense["quantity"] }}</td>
-          <td>{{ "$%.2f"| format(expense["price"]) }}</td>
-          <td>{{ expense["date"] }}</td>
+        <tr style="color: {{expense['color']}}">
+          <td style="color: {{expense['color']}}">{{ expense["category"] }}</td>
+          <td style="color: {{expense['color']}}">
+            {{ expense["description"] }}
+          </td>
+          <td style="color: {{expense['color']}}">
+            {{ expense["purchaseLocation"] }}
+          </td>
+          <td style="color: {{expense['color']}}">{{ expense["quantity"] }}</td>
+          <td style="color: {{expense['color']}}">
+            {{ "$%.2f"| format(expense["price"]) }}
+          </td>
+          <td style="color: {{expense['color']}}">{{ expense["date"] }}</td>
         </tr>
         {% endfor %}
       </table>
@@ -55,11 +61,21 @@
 
         {% for income in incomes %}
         <tr>
-          <td>{{ income["category"] }}</td>
-          <td>{{ income["description"] }}</td>
-          <td>{{ income["method"] }}</td>
-          <td>{{ "$%.2f"| format(income["income"]) }}</td>
-          <td>{{ income["date"] }}</td>
+          <td style="color: {{income['color']}} !important">
+            {{ income["category"] }}
+          </td>
+          <td style="color: {{income['color']}} !important">
+            {{ income["description"] }}
+          </td>
+          <td style="color: {{income['color']}} !important">
+            {{ income["method"] }}
+          </td>
+          <td style="color: {{income['color']}} !important">
+            {{ "$%.2f"| format(income["income"]) }}
+          </td>
+          <td style="color: {{income['color']}} !important">
+            {{ income["date"] }}
+          </td>
         </tr>
         {% endfor %}
       </table>
