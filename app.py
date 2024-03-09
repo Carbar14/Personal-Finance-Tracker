@@ -23,9 +23,13 @@ Session(app)
 @app.route("/")
 @login_required
 def index():
+    #establish connection to data base
     conn = get_db_connection()
+
+    #gets all expenses and incomes in variables
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     inc = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+
     conn.close()
     return render_template("index.html", expenses=exps, incomes=inc)
 
@@ -37,39 +41,46 @@ def login():
     #establish connection to data base
     conn = get_db_connection()
 
-    passwordHasher = PasswordHasher()
-
+    #Post
     if request.method == "POST":
+        #gets username and password from login form
         username = request.form.get("username")
         password = request.form.get("password")
         
+        #Username not inputted
         if not username:
             flash('Username is required!')
             conn.commit()
             conn.close()
             return render_template("login.html")
+        #Password not inputted
         elif not password:
             flash('Password is required!')
             conn.commit()
             conn.close()
             return render_template("login.html")
+        #Username doesn't exist in database
         elif not conn.execute("SELECT * FROM users WHERE username= ?", (username,)).fetchall():
             flash("Username does not exist!")
             conn.commit()
             conn.close()
             return render_template("login.html")
-        #hash
         
+        #gets users password hash
         hash = conn.execute("SELECT hash FROM users WHERE username = ?", (username,)).fetchall()[0]["hash"]
+        #establish password hasher
         ph = PasswordHasher()
 
-        print()
+        #sets password matches variable to true if it matches the hash. False if doesn't.
         try:
             passwordMatches = ph.verify(hash, password)
         except VerifyMismatchError:
             passwordMatches = False
+
+        #Password rehash
         if ph.check_needs_rehash(hash):
             conn.execute("INSERT INTO users (hash) VALUES (?) WHERE username = ?", (ph.hash(password), username))
+        #Password incorrect    
         if not passwordMatches:
             flash("Password incorrect for that username!")
         else:
@@ -97,27 +108,35 @@ def login():
 def register():
     #establish connection to data base
     conn = get_db_connection()
-
+    #Post
     if request.method == "POST":
+        #Get username, password, and password check from register form
         username = request.form.get("username")
         password = request.form.get("password")
-
         passwordCheck = request.form.get("passwordCheck")
 
+        # Username not inputted
         if not username:
             flash('Username is required!')
+        # Password not inputted
         elif not password:
             flash('Password is required!')
+        # Password check not inputted
         elif not passwordCheck:
             flash('Password confirmation is required!')
+        # Password and Password check don't match
         elif password != passwordCheck:
             flash('Passwords do not match!')
+        # Username inputted doesn't exist
         elif conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall():
             flash('Username already taken')
+        #Everything checks out
         else:
-            #hash
+            # establish password hasher
             passwordHasher = PasswordHasher()
+            #hash password
             hash = passwordHasher.hash(password)
+
             #registers user
             conn.execute("INSERT INTO users (username, hash) VALUES (?, ?)", (username, hash))
             #sets session
@@ -138,9 +157,11 @@ def register():
 @app.route("/add-expense", methods=["GET", "POST"])
 @login_required
 def addExpense():
+    #establish connection to data base
     conn = get_db_connection()
 
     if request.method == "POST":
+        #gets data from form
         userId = session["user_id"]
         category = request.form.get("category")
         description = request.form.get("description")
@@ -149,7 +170,9 @@ def addExpense():
         price = float(request.form.get("price"))
         date = request.form.get("date")
 
+        #inserts into database
         conn.execute("INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date) VALUES (?, ?, ?, ?, ?, ?, ?)", (userId, category, description, purchaseLocation, quantity, price, date))
+
         conn.commit()
         conn.close()
         return redirect("/")
@@ -159,9 +182,11 @@ def addExpense():
 @app.route("/add-income", methods=["GET", "POST"])
 @login_required
 def addIncome():
+    #establish connection to data base
      conn = get_db_connection()
 
      if request.method == "POST":
+        #gets data from form
         userId = session["user_id"]
         category = request.form.get("category")
         description = request.form.get("description")
@@ -169,7 +194,9 @@ def addIncome():
         income = float(request.form.get("income"))
         date = request.form.get("date")
 
+        #inserts into database
         conn.execute("INSERT INTO incomes (user_id, category, description, method, income, date) VALUES (?, ?, ?, ?, ?, ?)", (userId, category, description, method, income, date))
+
         conn.commit()
         conn.close()
         return redirect("/")
@@ -180,10 +207,14 @@ def addIncome():
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required
 def analyzeExpenses():
+    #establish connection to data base
     conn = get_db_connection()
+
+    #gets distinct catagories and purshase locations
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     
+    #sets filters to nothing off the start
     categoryFilter = None
     purchaseLocationFilter = None
     keywordsFilter = None
@@ -193,10 +224,13 @@ def analyzeExpenses():
     fromPriceFilter = None
     toPriceFilter = None
 
+    #gets all expenses
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    #gets sum of all expenses
     total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
+
+    #post
     if request.method == "POST":
-        
         
         # get filter selections
         categoryFilter = request.form.get("category")
@@ -208,30 +242,33 @@ def analyzeExpenses():
         fromPriceFilter = request.form.get("fromPrice")
         toPriceFilter = request.form.get("toPrice")
 
+        #checks for if from-to and singular date is on at the same time
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
+        #checks if price filters are valid
         if (fromPriceFilter and toPriceFilter) and float(fromPriceFilter) > float(toPriceFilter):
             flash("From-price must be smaller than to-price")
 
-
+        #formatting date filters
         if fromDateFilter:
             fD = date.fromisoformat(fromDateFilter)
         if toDateFilter:
             tD = date.fromisoformat(toDateFilter)
         
+        #checks if from is less than to date
         if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
             flash("From-date must be less than to-date")
 
+        #floats price filters
         floatedFromPriceFilter = 0
         if fromPriceFilter:
             floatedFromPriceFilter = float(fromPriceFilter)
-        
         floatedToPriceFilter = 0
         if toPriceFilter:
             floatedToPriceFilter = float(toPriceFilter)
         
-        
+        #gets all expenses with the FILTERS applied
         exps = conn.execute("SELECT * FROM expenses WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -248,6 +285,8 @@ def analyzeExpenses():
                                 " ELSE 1 END"
                                 #, fromPriceFilter, toPriceFilter, float(fromPriceFilter), float(toPriceFilter), fromPriceFilter, toPriceFilter, float(fromPriceFilter), fromPriceFilter, toPriceFilter, float(toPriceFilter)
                             , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter , fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()
+        
+        #gets total of all expenses with the FILTERS applied
         total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -263,7 +302,9 @@ def analyzeExpenses():
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
                             , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
+    #get
     elif request.method == "GET":
+        #Makes it so that filters are set to nothing if they are not set already.
         categoryFilter = categoryFilter if categoryFilter is not None else ""
         purchaseLocationFilter = purchaseLocationFilter if purchaseLocationFilter is not None else ""  
         keywordsFilter = keywordsFilter if keywordsFilter is not None else ""  
@@ -289,11 +330,14 @@ def dateIsLessThan(d1, d2):
 @app.route("/analyzeIncome", methods=["GET", "POST"])
 @login_required
 def analyzeIncome():
+    #establish connection to data base
     conn = get_db_connection()
+
+    #gets distinct categories and methods
     categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
     methods = conn.execute("SELECT DISTINCT method FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
     
-     
+    #sets filters to nothing off the start
     categoryFilter = None
     methodFilter = None
     keywordsFilter = None
@@ -303,11 +347,13 @@ def analyzeIncome():
     fromIncomeFilter = None
     toIncomeFilter = None
 
+    #gets all incomes
     incs = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    #gets total of all incomes
     total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()[0]["sum"]
-    if request.method == "POST":
-        
 
+    #Post
+    if request.method == "POST":
         # get filter selections
         categoryFilter = request.form.get("category")
         methodFilter = request.form.get("method")
@@ -318,30 +364,33 @@ def analyzeIncome():
         fromIncomeFilter = request.form.get("fromIncome")
         toIncomeFilter = request.form.get("toIncome")
 
+        #checks for if from-to and singular date is on at the same time
         if dateFilter and (fromDateFilter or toDateFilter):
             flash("Cannot do from-to date at the same time as a specific date")
         
+        #checks if income filters are valid
         if (fromIncomeFilter and toIncomeFilter) and float(fromIncomeFilter) > float(toIncomeFilter):
             flash("From-income must be smaller than to-income")
 
-
+        #formatting date filters
         if fromDateFilter:
             fD = date.fromisoformat(fromDateFilter)
         if toDateFilter:
             tD = date.fromisoformat(toDateFilter)
         
+        #checks if from is less than to date
         if  fromDateFilter and toDateFilter and (not dateIsLessThan(fD, tD)):
             flash("From-date must be less than to-date")
 
-
+        #turns income filters to float
         floatedFromIncomeFilter = 0
         if fromIncomeFilter:
             floatedFromIncomeFilter = float(fromIncomeFilter)
-        
         floatedToIncomeFilter = 0
         if toIncomeFilter:
             floatedToIncomeFilter = float(toIncomeFilter)
         
+        #gets all incomes with the FILTERS applied
         incs = conn.execute("SELECT * FROM incomes WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -357,6 +406,8 @@ def analyzeIncome():
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
                             , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter)).fetchall()
+        
+        #gets total of all incomes with the FILTERS applied
         total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE"\
                             " user_id = ?"\
                             " AND CASE WHEN ? != '' THEN category = ? ELSE 1 END"\
@@ -372,7 +423,9 @@ def analyzeIncome():
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN 0 AND ?"\
                                 " ELSE 1 END"
                             , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter)).fetchall()[0]["sum"]
+    #Get
     elif request.method == "GET":
+        #Makes it so that filters are set to nothing if they are not set already.
         categoryFilter = categoryFilter if categoryFilter is not None else ""
         methodFilter = methodFilter if methodFilter is not None else ""  
         keywordsFilter = keywordsFilter if keywordsFilter is not None else ""  
@@ -389,10 +442,14 @@ def analyzeIncome():
 @app.route("/pieChart", methods=["GET", "POST"])
 @login_required
 def pieChart():
+    #establish connection to data base
     conn = get_db_connection()
+
+    #Get all expenses and Incomes sorted by date ascending
     exps = conn.execute("SELECT category, date, SUM(price * quantity) FROM expenses WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
     incs = conn.execute("SELECT category, date, SUM(income) FROM incomes WHERE user_id = ? GROUP BY category", (session["user_id"],)).fetchall()
 
+    #formats the exps and incs so it can be properly turned into .json
     expsFormatted = [{'category': category, 'price': price, 'date': date} for category, date, price in exps]
     incsFormatted = [{'category': category, 'income': income, 'date': date} for category, date, income in incs]
 
@@ -402,19 +459,24 @@ def pieChart():
 @app.route("/lineChart", methods=["GET", "POST"])
 @login_required
 def lineChart():
+    #establish connection to data base
     conn = get_db_connection()
+
+    #Get all expenses and Incomes sorted by date ascending
     exps = conn.execute("SELECT price, category, date FROM expenses WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
     incs = conn.execute("SELECT income, category, date FROM incomes WHERE user_id = ? ORDER BY date ASC", (session["user_id"],)).fetchall()
 
+    #formats the exps and incs so it can be properly turned into .json
     expsFormatted = [{'price': price, 'category' : category, 'date': date} for price, category, date in exps]
     incsFormatted = [{'income': income, 'category' : category, 'date': date} for income, category, date in incs]
 
+    #gets all distinct incs and exps categories
     expsCategories = conn.execute("SELECT DISTINCT category from expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     incsCategories = conn.execute("SELECT DISTINCT category from incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
 
+    #gets all the years
     years = set(datetime.strptime(element['date'], "%Y-%m-%d").year for element in (expsFormatted + incsFormatted))
+    #sorts the years
     sortedYears = sorted(list(years))
-    print(sortedYears)
-
-
+    
     return render_template("lineChart.html", incomes=incsFormatted, expenses=expsFormatted, years=sortedYears, expsCategories=expsCategories, incsCategories=incsCategories)
