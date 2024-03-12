@@ -163,7 +163,13 @@ def addExpense():
     if request.method == "POST":
         #gets data from form
         userId = session["user_id"]
-        category = request.form.get("category")
+
+        if request.form.get("categoryText"):
+            category = request.form.get("categoryText")
+        elif request.form.get("categorySelect"):
+            category = request.form.get("categorySelect")
+        else:
+            category = ""
         description = request.form.get("description")
         purchaseLocation = request.form.get("purchaseLocation")
         quantity = int(request.form.get("quantity"))
@@ -178,7 +184,10 @@ def addExpense():
         conn.close()
         return redirect("/")
     else:
-        return render_template("addExpense.html")
+         #get all income categories
+        categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+        conn.close()
+        return render_template("addExpense.html", categories=categories)
 
 @app.route("/add-income", methods=["GET", "POST"])
 @login_required
@@ -189,7 +198,13 @@ def addIncome():
      if request.method == "POST":
         #gets data from form
         userId = session["user_id"]
-        category = request.form.get("category")
+        if request.form.get("categoryText"):
+            category = request.form.get("categoryText")
+        elif request.form.get("categorySelect"):
+            category = request.form.get("categorySelect")
+        else:
+            category = ""
+            
         description = request.form.get("description")
         method = request.form.get("method")
         income = float(request.form.get("income"))
@@ -203,7 +218,11 @@ def addIncome():
         conn.close()
         return redirect("/")
      else:
-        return render_template("addIncome.html")
+        #get all income categories
+        categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+
+        conn.close()
+        return render_template("addIncome.html", categories=categories)
      
 
 @app.route("/analyzeExpenses", methods=["GET", "POST"])

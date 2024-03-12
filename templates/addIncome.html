@@ -9,9 +9,53 @@
   <div class="formBox">
     <form action="/add-income" method="post">
       <div class="mb-3">
-        <label for="category" class="form-label">Category</label>
-        <input type="text" class="form-control" name="category" id="category" />
+        <label for="categoryText" class="form-label">Category</label>
+        <input
+          type="text"
+          class="form-control"
+          name="categoryText"
+          id="categoryText"
+          style="display: none"
+        />
+
+        <select
+          class="form-select dark-select"
+          name="categorySelect"
+          id="categorySelect"
+        >
+          {% for category in categories %}
+          <option value="{{category['category']}}">
+            {{category["category"]}}
+          </option>
+          {% endfor %}
+        </select>
+
+        <button type="button" class="btn btn-dark" id="switchCategoryInput">
+          Add New Category
+        </button>
+
+        <script>
+          let displayNewCategory = false;
+          document.getElementById("switchCategoryInput").onclick = function () {
+            displayNewCategory = !displayNewCategory;
+
+            if (displayNewCategory) {
+              document.getElementById("categoryText").style.display = "block";
+              document.getElementById("categorySelect").style.display = "none";
+              document.getElementById("switchCategoryInput").innerHTML =
+                "Use Exisitng Category";
+              document.getElementById("categorySelect").value = null;
+            } else {
+              document.getElementById("categoryText").style.display = "none";
+              document.getElementById("categorySelect").style.display = "block";
+              document.getElementById("switchCategoryInput").innerHTML =
+                "Add New Category";
+              document.getElementById("categoryText").value = null;
+            }
+          };
+        </script>
       </div>
+
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <input
