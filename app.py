@@ -225,6 +225,26 @@ def addIncome():
         return render_template("addIncome.html", categories=categories)
      
 
+
+@app.route('/color-category', methods=['POST'])
+def color_category():
+    #establish connection to data base
+    conn = get_db_connection()
+
+    #get data from post
+    category = request.form.get('category')
+    color = request.form.get('color')
+    type = request.form.get("type")
+
+    print(type + "   " + category + "   " + color)
+
+    conn.execute(f"UPDATE {type} SET color = ? WHERE category = ?", (color, category))
+    conn.commit()
+    conn.close()
+    
+    
+    return 'Color category updated successfully', 200
+
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required
 def analyzeExpenses():

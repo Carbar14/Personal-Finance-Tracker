@@ -130,9 +130,41 @@
         <button type="button" class="btn btn-dark" id="defaultColor">
           Default Color
         </button>
+        <button type="button" class="btn btn-dark" id="colorCategory">
+          Color Every Income with Selected Category
+        </button>
         <script>
           document.getElementById("defaultColor").onclick = function () {
             document.getElementById("color").value = "#f0f8ff";
+          };
+
+          document.getElementById("colorCategory").onclick = function () {
+            var formData = new FormData();
+            formData.append("type", "expenses");
+            formData.append(
+              "category",
+              document.getElementById("categorySelect").value
+            );
+            formData.append("color", document.getElementById("color").value);
+
+            // Send a POST request to the Flask route
+            fetch("/color-category", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => {
+                if (response.ok) {
+                  // Handle successful response
+                  console.log("Color category updated successfully");
+                } else {
+                  // Handle error response
+                  console.error("Failed to update color category");
+                }
+              })
+              .catch((error) => {
+                // Handle network error
+                console.error("Network error:", error);
+              });
           };
         </script>
       </div>
