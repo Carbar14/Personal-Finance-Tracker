@@ -16,6 +16,7 @@
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
           <th scope="col">Date</th>
+          <th scope="col">Delete</th>
         </tr>
 
         {% for expense in expenses %}
@@ -32,6 +33,24 @@
             {{ "$%.2f"| format(expense["price"]) }}
           </td>
           <td style="color: {{expense['color']}}">{{ expense["date"] }}</td>
+          <td style="text-align: center">
+            <form action="/delete" method="POST">
+              <input type="hidden" id="type" name="type" value="expenses" />
+              <input
+                type="hidden"
+                id="id"
+                name="id"
+                value="{{expense['id']}}"
+              />
+              <button
+                type="submit"
+                class="delete-btn btn btn-dark"
+                style="color: red; border: 0; text-align: center"
+              >
+                X
+              </button>
+            </form>
+          </td>
         </tr>
         {% endfor %}
       </table>
@@ -57,6 +76,7 @@
           <th scope="col">Method</th>
           <th scope="col">Income</th>
           <th scope="col">Date</th>
+          <th scope="col">Delete</th>
         </tr>
 
         {% for income in incomes %}
@@ -75,6 +95,19 @@
           </td>
           <td style="color: {{income['color']}} !important">
             {{ income["date"] }}
+          </td>
+          <td style="text-align: center">
+            <form action="/delete" method="POST">
+              <input type="hidden" id="type" name="type" value="incomes" />
+              <input type="hidden" id="id" name="id" value="{{income['id']}}" />
+              <button
+                type="submit"
+                class="delete-btn btn btn-dark"
+                style="color: red; border: 0; text-align: center"
+              >
+                X
+              </button>
+            </form>
           </td>
         </tr>
         {% endfor %}

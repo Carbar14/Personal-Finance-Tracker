@@ -245,6 +245,20 @@ def color_category():
     
     return 'Color category updated successfully', 200
 
+@app.route('/delete', methods=['POST'])
+def delete():
+    #establish connection to database
+    conn = get_db_connection()
+
+    type = request.form.get("type")
+    id = request.form.get("id")
+    conn.execute(f"DELETE from {type} WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/")
+
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required
 def analyzeExpenses():
