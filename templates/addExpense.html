@@ -33,6 +33,14 @@
         <button type="button" class="btn btn-dark" id="switchCategoryInput">
           Add New Category
         </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new category and choosing from
+            already created categories.
+          </div>
+        </div>
 
         <script>
           let displayNewCategory = false;
@@ -131,8 +139,17 @@
           Default Color
         </button>
         <button type="button" class="btn btn-dark" id="colorCategory">
-          Color Every Income with Selected Category
+          Color Every Expense with Selected Category
+          <div class="info-container">
+            <i class="icon-info-sign info-icon"></i>
+
+            <div class="info-text">
+              Clicking this will overwrite any colors set to expense with this
+              category.
+            </div>
+          </div>
         </button>
+
         <script>
           document.getElementById("defaultColor").onclick = function () {
             document.getElementById("color").value = "#f0f8ff";

@@ -24,7 +24,7 @@
 .center-horizontal {
   margin: 0 auto; /* This will horizontally center the div */
   width: 90vw; /* Adjust the width as needed */
-  max-width: 800px;
+  max-width: 1000px;
   padding: 25px;
 }
 
@@ -105,4 +105,8 @@
 
 .info-container:hover .info-text {
   display: block;
+}
+
+tr > * {
+  padding: 20px !important;
 }

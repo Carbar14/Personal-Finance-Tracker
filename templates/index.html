@@ -2,7 +2,7 @@
 
 <!-- Main -->
 {% block body %}
-<div class="cont center-horizontal">
+<div class="cont center-horizontal" style="max-width: 1300px">
   <!-- Expenses  -->
   {% if expenses -%}
   <div>
@@ -16,7 +16,17 @@
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
           <th scope="col">Date</th>
-          <th scope="col">Delete</th>
+          <th scope="col">
+            Delete
+            <br />
+            <div class="info-container">
+              <i class="icon-info-sign info-icon"></i>
+
+              <div class="info-text">
+                Pressing the X will delete it FOREVER!
+              </div>
+            </div>
+          </th>
         </tr>
 
         {% for expense in expenses %}
@@ -76,7 +86,17 @@
           <th scope="col">Method</th>
           <th scope="col">Income</th>
           <th scope="col">Date</th>
-          <th scope="col">Delete</th>
+          <th scope="col">
+            Delete
+            <br />
+            <div class="info-container">
+              <i class="icon-info-sign info-icon"></i>
+
+              <div class="info-text">
+                Pressing the X will delete it FOREVER!
+              </div>
+            </div>
+          </th>
         </tr>
 
         {% for income in incomes %}
