@@ -116,6 +116,17 @@
             <th scope="col">Method</th>
             <th scope="col">Income</th>
             <th scope="col">Date</th>
+            <th scope="col">
+              Delete
+              <br />
+              <div class="info-container">
+                <i class="icon-info-sign info-icon"></i>
+  
+                <div class="info-text">
+                  Pressing the X will delete it FOREVER!
+                </div>
+              </div>
+            </th>
           </tr>
 
           {% for income in incomes %}
@@ -125,6 +136,20 @@
             <td>{{ income["method"] }}</td>
             <td>{{ "$%.2f" | format(income["income"]) }}</td>
             <td>{{ income["date"] }}</td>
+            <td style="text-align: center">
+              <form action="/delete" method="POST">
+                <input type="hidden" id="type" name="type" value="incomes" />
+                <input type="hidden" id="id" name="id" value="{{income['id']}}" />
+                <input type="hidden" id="direct" name="direct" value="/analyzeIncome" />
+                <button
+                  type="submit"
+                  class="delete-btn btn btn-dark"
+                  style="color: red; border: 0; text-align: center"
+                >
+                  X
+                </button>
+              </form>
+            </td> b
           </tr>
           {% endfor %}
         </table>

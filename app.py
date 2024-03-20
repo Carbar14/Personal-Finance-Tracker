@@ -252,12 +252,13 @@ def delete():
 
     type = request.form.get("type")
     id = request.form.get("id")
+    direct = request.form.get("direct")
     conn.execute(f"DELETE from {type} WHERE id = ?", (id,))
 
     conn.commit()
     conn.close()
 
-    return redirect("/")
+    return redirect(direct)
 
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required

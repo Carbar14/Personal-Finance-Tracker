@@ -24,7 +24,7 @@
 .center-horizontal {
   margin: 0 auto; /* This will horizontally center the div */
   width: 90vw; /* Adjust the width as needed */
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 25px;
 }
 
