@@ -30,7 +30,7 @@
         </tr>
 
         {% for expense in expenses %}
-        <tr style="color: {{expense['color']}}">
+        <tr>
           <td style="color: {{expense['color']}}">{{ expense["category"] }}</td>
           <td style="color: {{expense['color']}}">
             {{ expense["description"] }}
@@ -102,21 +102,15 @@
 
         {% for income in incomes %}
         <tr>
-          <td style="color: {{income['color']}} !important">
-            {{ income["category"] }}
-          </td>
-          <td style="color: {{income['color']}} !important">
+          <td style="color: {{income['color']}} ">{{ income["category"] }}</td>
+          <td style="color: {{income['color']}} ">
             {{ income["description"] }}
           </td>
-          <td style="color: {{income['color']}} !important">
-            {{ income["method"] }}
-          </td>
-          <td style="color: {{income['color']}} !important">
+          <td style="color: {{income['color']}} ">{{ income["method"] }}</td>
+          <td style="color: {{income['color']}} ">
             {{ "$%.2f"| format(income["income"]) }}
           </td>
-          <td style="color: {{income['color']}} !important">
-            {{ income["date"] }}
-          </td>
+          <td style="color: {{income['color']}}">{{ income["date"] }}</td>
           <td style="text-align: center">
             <form action="/delete" method="POST">
               <input type="hidden" id="type" name="type" value="incomes" />

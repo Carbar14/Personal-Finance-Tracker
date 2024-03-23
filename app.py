@@ -269,6 +269,7 @@ def analyzeExpenses():
     #gets distinct catagories and purshase locations
     categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    colors = conn.execute("SELECT DISTINCT color FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     
     #sets filters to nothing off the start
     categoryFilter = None
@@ -279,6 +280,7 @@ def analyzeExpenses():
     toDateFilter = None
     fromPriceFilter = None
     toPriceFilter = None
+    colorFilter = None
 
     #gets all expenses
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
@@ -297,6 +299,7 @@ def analyzeExpenses():
         toDateFilter = request.form.get("toDate")
         fromPriceFilter = request.form.get("fromPrice")
         toPriceFilter = request.form.get("toPrice")
+        colorFilter = request.form.get("color")
 
         #checks for if from-to and singular date is on at the same time
         if dateFilter and (fromDateFilter or toDateFilter):
@@ -338,9 +341,10 @@ def analyzeExpenses():
                             " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
-                                " ELSE 1 END"
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN color = ? ELSE 1 END"
                                 #, fromPriceFilter, toPriceFilter, float(fromPriceFilter), float(toPriceFilter), fromPriceFilter, toPriceFilter, float(fromPriceFilter), fromPriceFilter, toPriceFilter, float(toPriceFilter)
-                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter , fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter , fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter, colorFilter, colorFilter)).fetchall()
         
         #gets total of all expenses with the FILTERS applied
         total = conn.execute("SELECT SUM(price) AS sum FROM expenses WHERE"\
@@ -356,8 +360,9 @@ def analyzeExpenses():
                             " AND CASE WHEN ? != '' AND ? != '' THEN price BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN ? AND 99999999"\
                                 " WHEN ? != '' AND ? == '' THEN price BETWEEN 0 AND ?"\
-                                " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter)).fetchall()[0]["sum"]
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN color = ? ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, purchaseLocationFilter, purchaseLocationFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, floatedToPriceFilter, fromPriceFilter, toPriceFilter, floatedFromPriceFilter, fromPriceFilter, toPriceFilter, floatedToPriceFilter, colorFilter, colorFilter)).fetchall()[0]["sum"]
     #get
     elif request.method == "GET":
         #Makes it so that filters are set to nothing if they are not set already.
@@ -368,9 +373,10 @@ def analyzeExpenses():
         fromDateFilter = fromDateFilter if fromDateFilter is not None else ""  
         toDateFilter = toDateFilter if toDateFilter is not None else ""  
         fromPriceFilter = fromPriceFilter if fromPriceFilter is not None else ""  
-        toPriceFilter = toPriceFilter if toPriceFilter is not None else ""  
+        toPriceFilter = toPriceFilter if toPriceFilter is not None else ""
+        colorFilter = colorFilter if colorFilter is not None else ""  
 
-    return render_template("analyzeExpenses.html", categories=categories,purchaseLocations=purchaseLocations,expenses=exps,total=total,categoryFilter=categoryFilter,purchaseLocationFilter=purchaseLocationFilter,keywordsFilter=keywordsFilter,dateFilter=dateFilter,fromDateFilter=fromDateFilter,toDateFilter=toDateFilter,    fromPriceFilter=fromPriceFilter, toPriceFilter=toPriceFilter)
+    return render_template("analyzeExpenses.html", categories=categories,purchaseLocations=purchaseLocations, colors=colors, expenses=exps,total=total,categoryFilter=categoryFilter,purchaseLocationFilter=purchaseLocationFilter,keywordsFilter=keywordsFilter,dateFilter=dateFilter,fromDateFilter=fromDateFilter,toDateFilter=toDateFilter,    fromPriceFilter=fromPriceFilter, toPriceFilter=toPriceFilter, colorFilter=colorFilter)
 
 # checks if first date is less than second date
 def dateIsLessThan(d1, d2):
@@ -392,6 +398,7 @@ def analyzeIncome():
     #gets distinct categories and methods
     categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
     methods = conn.execute("SELECT DISTINCT method FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    colors = conn.execute("SELECT DISTINCT color FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
     
     #sets filters to nothing off the start
     categoryFilter = None
@@ -402,6 +409,7 @@ def analyzeIncome():
     toDateFilter = None
     fromIncomeFilter = None
     toIncomeFilter = None
+    colorFilter = None
 
     #gets all incomes
     incs = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
@@ -419,6 +427,7 @@ def analyzeIncome():
         toDateFilter = request.form.get("toDate")
         fromIncomeFilter = request.form.get("fromIncome")
         toIncomeFilter = request.form.get("toIncome")
+        colorFilter = request.form.get("color")
 
         #checks for if from-to and singular date is on at the same time
         if dateFilter and (fromDateFilter or toDateFilter):
@@ -460,8 +469,9 @@ def analyzeIncome():
                             " AND CASE WHEN ? != '' AND ? != '' THEN income BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN ? AND 99999999"\
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN 0 AND ?"\
-                                " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter)).fetchall()
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN color = ? ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter, colorFilter, colorFilter)).fetchall()
         
         #gets total of all incomes with the FILTERS applied
         total = conn.execute("SELECT SUM(income) AS sum FROM incomes WHERE"\
@@ -477,8 +487,9 @@ def analyzeIncome():
                             " AND CASE WHEN ? != '' AND ? != '' THEN income BETWEEN ? AND ? "\
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN ? AND 99999999"\
                                 " WHEN ? != '' AND ? == '' THEN income BETWEEN 0 AND ?"\
-                                " ELSE 1 END"
-                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter)).fetchall()[0]["sum"]
+                                " ELSE 1 END"\
+                            " AND CASE WHEN ? != '' THEN color = ? ELSE 1 END"
+                            , (session["user_id"], categoryFilter, categoryFilter, methodFilter, methodFilter, keywordsFilter, f'%{keywordsFilter}%', dateFilter, dateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromDateFilter, toDateFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, floatedToIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedFromIncomeFilter, fromIncomeFilter, toIncomeFilter, floatedToIncomeFilter, colorFilter, colorFilter)).fetchall()[0]["sum"]
     #Get
     elif request.method == "GET":
         #Makes it so that filters are set to nothing if they are not set already.
@@ -490,8 +501,9 @@ def analyzeIncome():
         toDateFilter = toDateFilter if toDateFilter is not None else ""  
         fromIncomeFilter = fromIncomeFilter if fromIncomeFilter is not None else ""  
         toIncomeFilter = toIncomeFilter if toIncomeFilter is not None else ""  
+        colorFilter = colorFilter if colorFilter is not None else ""
 
-    return render_template("analyzeIncome.html", categories=categories, methods=methods, incomes=incs, total=total, categoryFilter=categoryFilter, methodFilter=methodFilter, keywordsFilter=keywordsFilter, dateFilter=dateFilter, fromDateFilter=fromDateFilter, toDateFilter=toDateFilter, fromIncomeFilter=fromIncomeFilter, toIncomeFilter=toIncomeFilter)
+    return render_template("analyzeIncome.html", categories=categories, methods=methods, colors=colors, incomes=incs, total=total, categoryFilter=categoryFilter, methodFilter=methodFilter, keywordsFilter=keywordsFilter, dateFilter=dateFilter, fromDateFilter=fromDateFilter, toDateFilter=toDateFilter, fromIncomeFilter=fromIncomeFilter, toIncomeFilter=toIncomeFilter, colorFilter=colorFilter)
 
 
 

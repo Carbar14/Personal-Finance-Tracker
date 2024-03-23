@@ -93,6 +93,23 @@
         />
       </div>
 
+      <!-- color -->
+      <div class="mb-3">
+        <label for="color">Choose color:</label>
+        <select
+          name="color"
+          id="color"
+          class="form-select"
+        >
+          <option></option>
+          {% for color in colors %}
+          <option style="color: {{color['color']}}"value="{{color['color']}}" {% if color['color'] == color %}selected{% endif %}>
+            {{color['color']}}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
       <!-- search button  -->
       <button type="submit" class="btn btn-primary">Search</button>
 
@@ -131,12 +148,12 @@
 
           {% for income in incomes %}
           <tr>
-            <td>{{ income["category"] }}</td>
-            <td>{{ income["description"] }}</td>
-            <td>{{ income["method"] }}</td>
-            <td>{{ "$%.2f" | format(income["income"]) }}</td>
-            <td>{{ income["date"] }}</td>
-            <td style="text-align: center">
+            <td style="color: {{income['color']}}">{{ income["category"] }}</td>
+            <td style="color: {{income['color']}}">{{ income["description"] }}</td>
+            <td style="color: {{income['color']}}">{{ income["method"] }}</td>
+            <td style="color: {{income['color']}}">{{ "$%.2f" | format(income["income"]) }}</td>
+            <td style="color: {{income['color']}}">{{ income["date"] }}</td>
+            <td style="text-align: center; color: {{income['color']}}">
               <form action="/delete" method="POST">
                 <input type="hidden" id="type" name="type" value="incomes" />
                 <input type="hidden" id="id" name="id" value="{{income['id']}}" />
