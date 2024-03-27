@@ -154,7 +154,7 @@
             <td style="color: {{income['color']}}">{{ "$%.2f" | format(income["income"]) }}</td>
             <td style="color: {{income['color']}}">{{ income["date"] }}</td>
             <td style="text-align: center; color: {{income['color']}}">
-              <form action="/delete" method="POST">
+              <form action="/delete" method="POST" style="display: inline-block">
                 <input type="hidden" id="type" name="type" value="incomes" />
                 <input type="hidden" id="id" name="id" value="{{income['id']}}" />
                 <input type="hidden" id="direct" name="direct" value="/analyzeIncome" />
@@ -164,6 +164,14 @@
                   style="color: red; border: 0; text-align: center"
                 >
                   X
+                </button>
+              </form>
+              <form action="/edit" method="POST" style="display: inline-block">
+                <input type="hidden" id="type" name="type" value="incomes" />
+                <input type="hidden" id="id" name="id" value="{{income['id']}}" />
+                <input type="hidden" id="direct" name="direct" value="/analyzeIncome" />
+                <button type="submit" class="delete-btn btn btn-dark">
+                  Edit
                 </button>
               </form>
             </td> b

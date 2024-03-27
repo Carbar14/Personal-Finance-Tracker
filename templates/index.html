@@ -17,7 +17,7 @@
           <th scope="col">Price</th>
           <th scope="col">Date</th>
           <th scope="col">
-            Delete
+            Delete / Edit
             <br />
             <div class="info-container">
               <i class="icon-info-sign info-icon"></i>
@@ -44,7 +44,7 @@
           </td>
           <td style="color: {{expense['color']}}">{{ expense["date"] }}</td>
           <td style="text-align: center">
-            <form action="/delete" method="POST">
+            <form action="/delete" method="POST" style="display: inline-block">
               <input type="hidden" id="type" name="type" value="expenses" />
               <input
                 type="hidden"
@@ -59,6 +59,19 @@
                 style="color: red; border: 0; text-align: center"
               >
                 X
+              </button>
+            </form>
+            <form action="/edit" method="POST" style="display: inline-block">
+              <input type="hidden" id="type" name="type" value="expenses" />
+              <input
+                type="hidden"
+                id="id"
+                name="id"
+                value="{{expenses['id']}}"
+              />
+              <input type="hidden" id="direct" name="direct" value="/" />
+              <button type="submit" class="delete-btn btn btn-dark">
+                Edit
               </button>
             </form>
           </td>
@@ -88,7 +101,7 @@
           <th scope="col">Income</th>
           <th scope="col">Date</th>
           <th scope="col">
-            Delete
+            Delete / Edit
             <br />
             <div class="info-container">
               <i class="icon-info-sign info-icon"></i>
@@ -112,7 +125,7 @@
           </td>
           <td style="color: {{income['color']}}">{{ income["date"] }}</td>
           <td style="text-align: center">
-            <form action="/delete" method="POST">
+            <form action="/delete" method="POST" style="display: inline-block">
               <input type="hidden" id="type" name="type" value="incomes" />
               <input type="hidden" id="id" name="id" value="{{income['id']}}" />
               <input type="hidden" id="direct" name="direct" value="/" />
@@ -122,6 +135,14 @@
                 style="color: red; border: 0; text-align: center"
               >
                 X
+              </button>
+            </form>
+            <form action="/edit" method="POST" style="display: inline-block">
+              <input type="hidden" id="type" name="type" value="incomes" />
+              <input type="hidden" id="id" name="id" value="{{income['id']}}" />
+              <input type="hidden" id="direct" name="direct" value="/" />
+              <button type="submit" class="delete-btn btn btn-dark">
+                Edit
               </button>
             </form>
           </td>
