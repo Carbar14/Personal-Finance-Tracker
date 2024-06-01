@@ -1,0 +1,193 @@
+<!-- layout -->
+{% extends "layout.html" %}
+
+<!-- Main -->
+{% block body %}
+
+<div class="cont center-small-form">
+  <h2 style="padding-left: 5px">Edit Expense</h2>
+  <div class="formBox">
+    <form action="/add-expense" method="post">
+      <div class="mb-3">
+        <label for="categoryText" class="form-label">Category</label>
+        <input
+          type="text"
+          class="form-control"
+          name="categoryText"
+          id="categoryText"
+          style="display: none"
+        />
+
+        <select
+          class="form-select dark-select"
+          name="categorySelect"
+          id="categorySelect"
+        >
+          {% for category in categories %}
+          <option value="{{category['category']}}">
+            {{category["category"]}}
+          </option>
+          {% endfor %}
+        </select>
+
+        <button type="button" class="btn btn-dark" id="switchCategoryInput">
+          Add New Category
+        </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new category and choosing from
+            already created categories.
+          </div>
+        </div>
+
+        <script>
+          let displayNewCategory = false;
+          document.getElementById("switchCategoryInput").onclick = function () {
+            displayNewCategory = !displayNewCategory;
+
+            if (displayNewCategory) {
+              document.getElementById("categoryText").style.display = "block";
+              document.getElementById("categorySelect").style.display = "none";
+              document.getElementById("switchCategoryInput").innerHTML =
+                "Use Exisitng Category";
+              document.getElementById("categorySelect").value = null;
+            } else {
+              document.getElementById("categoryText").style.display = "none";
+              document.getElementById("categorySelect").style.display = "block";
+              document.getElementById("switchCategoryInput").innerHTML =
+                "Add New Category";
+              document.getElementById("categoryText").value = null;
+            }
+          };
+        </script>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input
+          type="text"
+          class="form-control"
+          name="description"
+          id="description"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="purchaseLocation" class="form-label"
+          >Purchase Location</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          name="purchaseLocation"
+          id="purchaseLocation"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="quantity" class="form-label">
+          Quantity <span class="red">*</span></label
+        >
+        <input
+          type="number"
+          class="form-control"
+          name="quantity"
+          id="quantity"
+          min="1"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label"
+          >Price ($) <span class="red">*</span></label
+        >
+
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          class="form-control"
+          name="price"
+          id="price"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="date" class="form-label"
+          >Date <span class="red">*</span></label
+        >
+        <input
+          type="date"
+          class="form-control"
+          name="date"
+          id="date"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="color" class="form-label">Display Color</label>
+        <input
+          type="color"
+          value="#f0f8ff"
+          class="form-control"
+          name="color"
+          id="color"
+          required
+        />
+        <button type="button" class="btn btn-dark" id="defaultColor">
+          Default Color
+        </button>
+        <button type="button" class="btn btn-dark" id="colorCategory">
+          Color Every Expense with Selected Category
+          <div class="info-container">
+            <i class="icon-info-sign info-icon"></i>
+
+            <div class="info-text">
+              Clicking this will overwrite any colors set to expense with this
+              category.
+            </div>
+          </div>
+        </button>
+
+        <script>
+          document.getElementById("defaultColor").onclick = function () {
+            document.getElementById("color").value = "#f0f8ff";
+          };
+
+          document.getElementById("colorCategory").onclick = function () {
+            var formData = new FormData();
+            formData.append("type", "expenses");
+            formData.append(
+              "category",
+              document.getElementById("categorySelect").value
+            );
+            formData.append("color", document.getElementById("color").value);
+
+            // Send a POST request to the Flask route
+            fetch("/color-category", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => {
+                if (response.ok) {
+                  // Handle successful response
+                  console.log("Color category updated successfully");
+                } else {
+                  // Handle error response
+                  console.error("Failed to update color category");
+                }
+              })
+              .catch((error) => {
+                // Handle network error
+                console.error("Network error:", error);
+              });
+          };
+        </script>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Edit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

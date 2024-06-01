@@ -260,6 +260,18 @@ def delete():
 
     return redirect(direct)
 
+@app.route('/edit', methods=['POST'])
+def edit():
+    #establish connection to database
+    conn = get_db_connection()
+
+    id = request.form.get("id")
+    direct = request.form.get("direct")
+    
+
+    return render_template(direct, id=id)
+    
+
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
 @login_required
 def analyzeExpenses():
