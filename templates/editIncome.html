@@ -23,9 +23,13 @@
           name="categorySelect"
           id="categorySelect"
         >
-          {% for category in categories %}
-          <option value="{{category['category']}}">
-            {{category["category"]}}
+          {% for cat in categories %}
+          <option value="{{cat['category']}}"
+          {% if cat['category'] == income['category'] %}
+            selected
+            {% endif %}
+          >
+            {{cat["category"]}}
           </option>
           {% endfor %}
         </select>
@@ -71,6 +75,7 @@
           class="form-control"
           name="description"
           id="description"
+          value="{{income['description']}}"
         />
       </div>
       <div class="mb-3">
@@ -88,6 +93,7 @@
           class="form-control"
           name="income"
           id="income"
+          value="{{income['income']}}"
           required
         />
       </div>
@@ -100,6 +106,7 @@
           class="form-control"
           name="date"
           id="date"
+          value="{{income['date']}}"
           required
         />
       </div>
@@ -108,10 +115,10 @@
         <label for="color" class="form-label">Display Color</label>
         <input
           type="color"
-          value="#f0f8ff"
           class="form-control"
           name="color"
           id="color"
+          value="{{income['color']}}"
           required
         />
         <button type="button" class="btn btn-dark" id="defaultColor">

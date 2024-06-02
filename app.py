@@ -260,16 +260,41 @@ def delete():
 
     return redirect(direct)
 
-@app.route('/edit', methods=['POST'])
+@app.route('/edit', methods=['GET', 'POST'])
 def edit():
     #establish connection to database
     conn = get_db_connection()
 
-    id = request.form.get("id")
-    direct = request.form.get("direct")
+    if request.method == "POST":
+        type = request.form.get("type")
+        id = request.form.get("id")
+        direct = request.form.get("direct")
+        print(type)
+        print(id)
+        print(direct)
+
+        if type == "expenses":
+            # get all expense categories
+            categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+
+            expense = conn.execute("SELECT * FROM expenses WHERE id = ?", (id,)).fetchall()[0]
+            print(expense)
+           
+            return render_template(direct, categories=categories, expense=expense)
+        else:
+            # get all income categories
+            categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+
+            income = conn.execute("SELECT * FROM incomes WHERE id = ?", (id,)).fetchall()[0]
+            print(income["category"])
+            return render_template(direct, categories=categories, income=income)
+    else:
+        print()
+        return redirect('/')
+        
+
     
 
-    return render_template(direct, id=id)
     
 
 @app.route("/analyzeExpenses", methods=["GET", "POST"])
