@@ -62,6 +62,7 @@
               </button>
             </form>
             <form action="/edit" method="POST" style="display: inline-block">
+              <input type="hidden" id="method" name="method" value="open" />
               <input type="hidden" id="type" name="type" value="expenses" />
               <input
                 type="hidden"
@@ -143,6 +144,7 @@
               </button>
             </form>
             <form action="/edit" method="POST" style="display: inline-block">
+              <input type="hidden" id="method" name="method" value="open" />
               <input type="hidden" id="type" name="type" value="incomes" />
               <input type="hidden" id="id" name="id" value="{{income['id']}}" />
               <input

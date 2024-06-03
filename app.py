@@ -29,7 +29,7 @@ def index():
     #gets all expenses and incomes in variables
     exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     inc = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
-    print(exps[1]["color"])
+    # print(exps[1]["color"])
     conn.close()
     return render_template("index.html", expenses=exps, incomes=inc)
 
@@ -266,30 +266,87 @@ def edit():
     conn = get_db_connection()
 
     if request.method == "POST":
-        type = request.form.get("type")
-        id = request.form.get("id")
-        direct = request.form.get("direct")
-        print(type)
-        print(id)
-        print(direct)
 
-        if type == "expenses":
-            # get all expense categories
-            categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+        if request.form.get("method") == "open":
+            
+            type = request.form.get("type")
+            id = request.form.get("id")
+            direct = request.form.get("direct")
 
-            expense = conn.execute("SELECT * FROM expenses WHERE id = ?", (id,)).fetchall()[0]
-            print(expense)
-           
-            return render_template(direct, categories=categories, expense=expense)
+            if type == "expenses":
+                # get all expense categories
+                categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+
+                #get expense with given id
+                expense = conn.execute("SELECT * FROM expenses WHERE id = ?", (id,)).fetchall()[0]
+                
+                conn.close()
+
+                return render_template(direct, categories=categories, expense=expense)
+            else:
+                # get all income categories
+                categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+
+                #get income with given id
+                income = conn.execute("SELECT * FROM incomes WHERE id = ?", (id,)).fetchall()[0]
+                
+                conn.close()
+
+                return render_template(direct, categories=categories, income=income)
         else:
-            # get all income categories
-            categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+            if request.form.get('type') == "expense":
+                #gets data from form
+                if request.form.get("categoryText"):
+                    category = request.form.get("categoryText")
+                elif request.form.get("categorySelect"):
+                    category = request.form.get("categorySelect")
+                else:
+                    category = ""
+            
+                description = request.form.get("description")
+                purchaseLocation = request.form.get("purchaseLocation")
+                quantity = request.form.get("quantity")
+                price = float(request.form.get("price"))
+                date = request.form.get("date")
+                color = request.form.get("color")
 
-            income = conn.execute("SELECT * FROM incomes WHERE id = ?", (id,)).fetchall()[0]
-            print(income["category"])
-            return render_template(direct, categories=categories, income=income)
+                id = request.form.get("id")
+
+                print("ehehe")
+                #update table
+                conn.execute("UPDATE expenses SET category = ?, description = ?, purchaseLocation = ?, quantity = ?, price = ?, date = ?, color = ? WHERE id = ?", (category, description, purchaseLocation, quantity, price, date, color, id))
+                conn.commit()
+                conn.close()
+
+                return redirect("/")
+            else:
+                #gets data from form
+                if request.form.get("categoryText"):
+                    category = request.form.get("categoryText")
+                elif request.form.get("categorySelect"):
+                    category = request.form.get("categorySelect")
+                else:
+                    category = ""
+            
+                description = request.form.get("description")
+                method = request.form.get("method")
+                income = float(request.form.get("income"))
+                date = request.form.get("date")
+                color = request.form.get("color")
+
+                id = request.form.get("id")
+
+                #update table
+                conn.execute("UPDATE incomes SET category = ?, description = ?, method = ?, income = ?, date = ?, color = ? WHERE id = ?", (category, description, method, income, date, color, id))
+
+                conn.commit()
+                conn.close()
+
+                return redirect("/")
+
+
     else:
-        print()
+        print("Error")
         return redirect('/')
         
 

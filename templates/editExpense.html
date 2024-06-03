@@ -7,7 +7,7 @@
 <div class="cont center-small-form">
   <h2 style="padding-left: 5px">Edit Expense</h2>
   <div class="formBox">
-    <form action="/add-expense" method="post">
+    <form action="/edit" method="post">
       <div class="mb-3">
         <label for="categoryText" class="form-label">Category</label>
         <input
@@ -192,7 +192,8 @@
           };
         </script>
       </div>
-
+      <input hidden id="type" name="type" value="expense"/>
+      <input hidden id="id" name="id" value="{{expense['id']}}"/>
       <button type="submit" class="btn btn-primary">Edit</button>
     </form>
   </div>
