@@ -8,6 +8,7 @@
   <h2 style="padding-left: 5px">Edit Income</h2>
   <div class="formBox">
     <form action="/edit" method="post">
+      <!-- category -->
       <div class="mb-3">
         <label for="categoryText" class="form-label">Category</label>
         <input
@@ -68,6 +69,7 @@
         </script>
       </div>
 
+      <!-- description -->
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <input
@@ -78,10 +80,67 @@
           value="{{income['description']}}"
         />
       </div>
+
+
+      <!-- method -->
       <div class="mb-3">
-        <label for="method" class="form-label">Payment Method</label>
-        <input type="text" class="form-control" name="method" id="method" />
+        <label for="methodText" class="form-label">Payment Method </label>
+        <input
+          type="text"
+          class="form-control"
+          name="methodText"
+          id="methodText"
+          style="display: none"
+        />
+
+        <select
+          class="form-select dark-select"
+          name="methodSelect"
+          id="methodSelect"
+        >
+          {% for method in methods %}
+          <option value="{{method['method']}}" 
+          {% if method['method'] == income['method'] %}
+          selected
+          {% endif %}>{{method["method"]}}</option>
+          {% endfor %}
+        </select>
+
+        <button type="button" class="btn btn-dark" id="switchMethodInput">
+          Add New Payment Method
+        </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new payment method and choosing from
+            already created payment method.
+          </div>
+        </div>
+
+        <script>
+          let displayNewMethod = false;
+          document.getElementById("switchMethodInput").onclick = function () {
+            displayNewMethod = !displayNewMethod;
+
+            if (displayNewMethod) {
+              document.getElementById("methodText").style.display = "block";
+              document.getElementById("methodSelect").style.display = "none";
+              document.getElementById("switchMethodInput").innerHTML =
+                "Use Exisitng Payment Methods";
+              document.getElementById("methodSelect").value = null;
+            } else {
+              document.getElementById("methodText").style.display = "none";
+              document.getElementById("methodSelect").style.display = "block";
+              document.getElementById("switchMethodInput").innerHTML =
+                "Add Payment Method";
+              document.getElementById("methodText").value = null;
+            }
+          };
+        </script>
       </div>
+
+      <!-- income -->
       <div class="mb-3">
         <label for="income" class="form-label"
           >Income ($) <span class="red">*</span></label
@@ -97,6 +156,7 @@
           required
         />
       </div>
+      <!-- date -->
       <div class="mb-3">
         <label for="date" class="form-label"
           >Date <span class="red">*</span></label
@@ -110,7 +170,7 @@
           required
         />
       </div>
-
+      <!-- color -->
       <div class="mb-3">
         <label for="color" class="form-label">Display Color</label>
         <input
@@ -171,8 +231,11 @@
           };
         </script>
       </div>
+      <!-- type -->
       <input hidden id="type" name="type" value="income"/>
+      <!-- id of edited income -->
       <input hidden id="id" name="id" value="{{income['id']}}"/>
+      <!-- submit button -->
       <button type="submit" class="btn btn-primary">Edit</button>
     </form>
   </div>

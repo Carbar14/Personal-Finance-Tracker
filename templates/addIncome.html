@@ -73,10 +73,61 @@
           id="description"
         />
       </div>
+
       <div class="mb-3">
-        <label for="method" class="form-label">Payment Method</label>
-        <input type="text" class="form-control" name="method" id="method" />
+        <label for="methodText" class="form-label">Payment Method </label>
+        <input
+          type="text"
+          class="form-control"
+          name="methodText"
+          id="methodText"
+          style="display: none"
+        />
+
+        <select
+          class="form-select dark-select"
+          name="methodSelect"
+          id="methodSelect"
+        >
+          {% for method in methods %}
+          <option value="{{method['method']}}">{{method["method"]}}</option>
+          {% endfor %}
+        </select>
+
+        <button type="button" class="btn btn-dark" id="switchMethodInput">
+          Add New Payment Method
+        </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new payment method and choosing from
+            already created payment method.
+          </div>
+        </div>
+
+        <script>
+          let displayNewMethod = false;
+          document.getElementById("switchMethodInput").onclick = function () {
+            displayNewMethod = !displayNewMethod;
+
+            if (displayNewMethod) {
+              document.getElementById("methodText").style.display = "block";
+              document.getElementById("methodSelect").style.display = "none";
+              document.getElementById("switchMethodInput").innerHTML =
+                "Use Exisitng Payment Methods";
+              document.getElementById("methodSelect").value = null;
+            } else {
+              document.getElementById("methodText").style.display = "none";
+              document.getElementById("methodSelect").style.display = "block";
+              document.getElementById("switchMethodInput").innerHTML =
+                "Add Payment Method";
+              document.getElementById("methodText").value = null;
+            }
+          };
+        </script>
       </div>
+
       <div class="mb-3">
         <label for="income" class="form-label"
           >Income ($) <span class="red">*</span></label

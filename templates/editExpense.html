@@ -8,6 +8,7 @@
   <h2 style="padding-left: 5px">Edit Expense</h2>
   <div class="formBox">
     <form action="/edit" method="post">
+      <!-- category -->
       <div class="mb-3">
         <label for="categoryText" class="form-label">Category</label>
         <input
@@ -65,7 +66,7 @@
           };
         </script>
       </div>
-
+      <!-- description -->
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <input
@@ -76,18 +77,80 @@
           value="{{expense['description']}}"
         />
       </div>
+      <!-- purchaseLocation -->
       <div class="mb-3">
-        <label for="purchaseLocation" class="form-label"
+        <label for="purchaseLocationText" class="form-label"
           >Purchase Location</label
         >
         <input
           type="text"
           class="form-control"
-          name="purchaseLocation"
-          id="purchaseLocation"
-          value="{{expense['purchaseLocation']}}"
+          name="purchaseLocationText"
+          id="purchaseLocationText"
+          style="display: none"
         />
+
+        <select
+          class="form-select dark-select"
+          name="purchaseLocationSelect"
+          id="purchaseLocationSelect"
+        >
+          {% for purchaseLocation in purchaseLocations %}
+          <option value="{{purchaseLocation['purchaseLocation']}}" 
+          {% if purchaseLocation['purchaseLocation'] == expense['purchaseLocation'] %}
+          selected
+          {% endif %}>{{purchaseLocation["purchaseLocation"]}}</option>
+          {% endfor %}
+        </select>
+
+        <button
+          type="button"
+          class="btn btn-dark"
+          id="switchPurchaseLocationInput"
+        >
+          Add New Purchase Location
+        </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new purchase location and choosing
+            from already created purchase locations.
+          </div>
+        </div>
+
+        <script>
+          let displayNewPurchaseLocation = false;
+          document.getElementById("switchPurchaseLocationInput").onclick =
+            function () {
+              displayNewPurchaseLocation = !displayNewPurchaseLocation;
+
+              if (displayNewPurchaseLocation) {
+                document.getElementById("purchaseLocationText").style.display =
+                  "block";
+                document.getElementById(
+                  "purchaseLocationSelect"
+                ).style.display = "none";
+                document.getElementById(
+                  "switchPurchaseLocationInput"
+                ).innerHTML = "Use Exisitng Purchase Location";
+                document.getElementById("purhcaseLocationSelect").value = null;
+              } else {
+                document.getElementById("purchaseLocationText").style.display =
+                  "none";
+                document.getElementById(
+                  "purchaseLocationSelect"
+                ).style.display = "block";
+                document.getElementById(
+                  "switchPurchaseLocationInput"
+                ).innerHTML = "Add New Purchase Location";
+                document.getElementById("purchaseLocationText").value = null;
+              }
+            };
+        </script>
       </div>
+
+      <!-- quantity -->
       <div class="mb-3">
         <label for="quantity" class="form-label">
           Quantity <span class="red">*</span></label
@@ -102,6 +165,8 @@
           required
         />
       </div>
+
+      <!-- price -->
       <div class="mb-3">
         <label for="price" class="form-label"
           >Price ($) <span class="red">*</span></label
@@ -118,6 +183,7 @@
           required
         />
       </div>
+      <!-- date -->
       <div class="mb-3">
         <label for="date" class="form-label"
           >Date <span class="red">*</span></label
@@ -131,7 +197,7 @@
           required
         />
       </div>
-
+      <!-- color -->
       <div class="mb-3">
         <label for="color" class="form-label">Display Color</label>
         <input
@@ -192,8 +258,11 @@
           };
         </script>
       </div>
+      <!-- type -->
       <input hidden id="type" name="type" value="expense"/>
+      <!-- id of edited expense -->
       <input hidden id="id" name="id" value="{{expense['id']}}"/>
+      <!-- submit button -->
       <button type="submit" class="btn btn-primary">Edit</button>
     </form>
   </div>

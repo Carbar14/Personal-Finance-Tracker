@@ -171,7 +171,14 @@ def addExpense():
         else:
             category = ""
         description = request.form.get("description")
-        purchaseLocation = request.form.get("purchaseLocation")
+
+        if request.form.get("purchaseLocationText"):
+            purchaseLocation = request.form.get("purchaseLocationText")
+        elif request.form.get("purchaseLocationSelect"):
+            purchaseLocation = request.form.get("purchaseLocationSelect")
+        else:
+            purchaseLocation = ""
+        
         quantity = int(request.form.get("quantity"))
         price = float(request.form.get("price"))
         date = request.form.get("date")
@@ -186,8 +193,9 @@ def addExpense():
     else:
          #get all income categories
         categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+        purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
         conn.close()
-        return render_template("addExpense.html", categories=categories)
+        return render_template("addExpense.html", categories=categories, purchaseLocations=purchaseLocations)
 
 @app.route("/add-income", methods=["GET", "POST"])
 @login_required
@@ -220,9 +228,9 @@ def addIncome():
      else:
         #get all income categories
         categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
-
+        methods = conn.execute("SELECT DISTINCT method FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
         conn.close()
-        return render_template("addIncome.html", categories=categories)
+        return render_template("addIncome.html", categories=categories, methods=methods)
      
 
 
@@ -276,23 +284,23 @@ def edit():
             if type == "expenses":
                 # get all expense categories
                 categories = conn.execute("SELECT DISTINCT category FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
-
+                purchaseLocations = conn.execute("SELECT DISTINCT purchaseLocation FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
                 #get expense with given id
                 expense = conn.execute("SELECT * FROM expenses WHERE id = ?", (id,)).fetchall()[0]
                 
                 conn.close()
 
-                return render_template(direct, categories=categories, expense=expense)
+                return render_template(direct, categories=categories, purchaseLocations=purchaseLocations, expense=expense)
             else:
                 # get all income categories
                 categories = conn.execute("SELECT DISTINCT category FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
-
+                methods = conn.execute("SELECT DISTINCT method FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
                 #get income with given id
                 income = conn.execute("SELECT * FROM incomes WHERE id = ?", (id,)).fetchall()[0]
                 
                 conn.close()
 
-                return render_template(direct, categories=categories, income=income)
+                return render_template(direct, categories=categories, methods=methods, income=income)
         else:
             if request.form.get('type') == "expense":
                 #gets data from form

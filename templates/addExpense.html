@@ -73,17 +73,78 @@
           id="description"
         />
       </div>
+
       <div class="mb-3">
-        <label for="purchaseLocation" class="form-label"
+        <label for="purchaseLocationText" class="form-label"
           >Purchase Location</label
         >
         <input
           type="text"
           class="form-control"
-          name="purchaseLocation"
-          id="purchaseLocation"
+          name="purchaseLocationText"
+          id="purchaseLocationText"
+          style="display: none"
         />
+
+        <select
+          class="form-select dark-select"
+          name="purchaseLocationSelect"
+          id="purchaseLocationSelect"
+        >
+          {% for purchaseLocation in purchaseLocations %}
+          <option value="{{purchaseLocation['purchaseLocation']}}">
+            {{purchaseLocation["purchaseLocation"]}}
+          </option>
+          {% endfor %}
+        </select>
+
+        <button
+          type="button"
+          class="btn btn-dark"
+          id="switchPurchaseLocationInput"
+        >
+          Add New Purchase Location
+        </button>
+        <div class="info-container">
+          <i class="icon-info-sign info-icon"></i>
+
+          <div class="info-text">
+            Click to switch between adding new purchase location and choosing
+            from already created purchase locations.
+          </div>
+        </div>
+
+        <script>
+          let displayNewPurchaseLocation = false;
+          document.getElementById("switchPurchaseLocationInput").onclick =
+            function () {
+              displayNewPurchaseLocation = !displayNewPurchaseLocation;
+
+              if (displayNewPurchaseLocation) {
+                document.getElementById("purchaseLocationText").style.display =
+                  "block";
+                document.getElementById(
+                  "purchaseLocationSelect"
+                ).style.display = "none";
+                document.getElementById(
+                  "switchPurchaseLocationInput"
+                ).innerHTML = "Use Exisitng Purchase Location";
+                document.getElementById("purhcaseLocationSelect").value = null;
+              } else {
+                document.getElementById("purchaseLocationText").style.display =
+                  "none";
+                document.getElementById(
+                  "purchaseLocationSelect"
+                ).style.display = "block";
+                document.getElementById(
+                  "switchPurchaseLocationInput"
+                ).innerHTML = "Add New Purchase Location";
+                document.getElementById("purchaseLocationText").value = null;
+              }
+            };
+        </script>
       </div>
+
       <div class="mb-3">
         <label for="quantity" class="form-label">
           Quantity <span class="red">*</span></label
