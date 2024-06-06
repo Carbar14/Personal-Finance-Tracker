@@ -6,6 +6,8 @@ from datetime import timedelta
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from datetime import date, datetime
+import csv
+import io
 
 app = Flask(__name__)
 
@@ -32,6 +34,39 @@ def index():
     # print(exps[1]["color"])
     conn.close()
     return render_template("index.html", expenses=exps, incomes=inc)
+
+
+
+@app.route('/downloadCsv', methods=['GET'])
+def downloadCsv():
+    #establish connection to data base
+    conn = get_db_connection()
+
+    type = request.args.get('type')
+    if type == 'expenses':
+        fieldnames = ['category', 'description', 'purchaseLocation', 'quantity', 'price', 'date']
+        data = conn.execute("SELECT category, description, purchaseLocation, quantity, price, date FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+    else:
+        fieldnames = ['category', 'description', 'method', 'income', 'date']
+        #data = conn.execute("").fetchall()
+
+     # Create a CSV in memory
+    si = io.StringIO()
+    cw = csv.DictWriter(si, fieldnames=fieldnames)
+    cw.writeheader()
+    cw.writerows(data)
+    
+    # Return the CSV as a download
+    output = io.BytesIO()
+    output.write(si.getvalue().encode('utf-8'))
+    output.seek(0)
+
+    filename = f"{type}.csv"
+    return send_file(output, mimetype='text/csv', as_attachment=True, attachment_filename=filename)
+
+
+
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

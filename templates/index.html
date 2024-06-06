@@ -6,7 +6,20 @@
   <!-- Expenses  -->
   {% if expenses -%}
   <div>
-    <h2>Expenses</h2>
+    <div
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <h2>Expenses</h2>
+      <div style="display: flex;">
+        <form action="/downloadCsv" method="GET" style="display: inline-block"></form>
+        <button type="submit" class="btn btn-dark">Download .csv File</button>
+        <select name="type" class="form-select" style="max-width: 150px;">
+          <option value="expenses" selected>Expenses</option>
+          <option value="incomes">Incomes</option>
+        </select>
+        </form>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table table-dark table-striped table-bordered table-hover">
         <tr>
@@ -97,7 +110,20 @@
   <!-- INCOMES -->
   {% if incomes -%}
   <div>
-    <h2>Income</h2>
+    <form
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <h2>Income</h2>
+      <div style="display: flex;">
+        <form action="/downloadCsv" method="GET" style="display: inline-block"></form>
+        <button type="submit" class="btn btn-dark">Download .csv File</button>
+        <select name="type" class="form-select" style="max-width: 150px;">
+          <option value="expenses">Expenses</option>
+          <option value="incomes" selected>Incomes</option>
+        </select>
+        </form>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table table-dark table-striped table-bordered table-hover">
         <tr>
