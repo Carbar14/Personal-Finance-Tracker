@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session, flash
+from flask import Flask, redirect, send_file, render_template, request, session, flash
 from flask_session import Session
 import sqlite3
 from helpers import login_required, get_db_connection
@@ -39,6 +39,7 @@ def index():
 
 @app.route('/downloadCsv', methods=['GET'])
 def downloadCsv():
+
     #establish connection to data base
     conn = get_db_connection()
 
@@ -48,13 +49,17 @@ def downloadCsv():
         data = conn.execute("SELECT category, description, purchaseLocation, quantity, price, date FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
     else:
         fieldnames = ['category', 'description', 'method', 'income', 'date']
-        #data = conn.execute("").fetchall()
+        data = conn.execute("SELECT category, description, method, income, date FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+        
 
-     # Create a CSV in memory
+      # Convert data to a list of dictionaries
+    data_dicts = [dict(row) for row in data]
+    
+    # Create a CSV in memory
     si = io.StringIO()
     cw = csv.DictWriter(si, fieldnames=fieldnames)
     cw.writeheader()
-    cw.writerows(data)
+    cw.writerows(data_dicts)
     
     # Return the CSV as a download
     output = io.BytesIO()
@@ -62,8 +67,7 @@ def downloadCsv():
     output.seek(0)
 
     filename = f"{type}.csv"
-    return send_file(output, mimetype='text/csv', as_attachment=True, attachment_filename=filename)
-
+    return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
 
 
 

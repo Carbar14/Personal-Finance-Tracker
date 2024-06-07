@@ -11,12 +11,12 @@
     >
       <h2>Expenses</h2>
       <div style="display: flex;">
-        <form action="/downloadCsv" method="GET" style="display: inline-block"></form>
-        <button type="submit" class="btn btn-dark">Download .csv File</button>
-        <select name="type" class="form-select" style="max-width: 150px;">
-          <option value="expenses" selected>Expenses</option>
-          <option value="incomes">Incomes</option>
-        </select>
+        <form action="/downloadCsv" method="GET" style="display: inline-block">
+          <select name="type" class="form-select" style="max-width: 150px;">
+            <option value="expenses" selected>Expenses</option>
+            <option value="incomes">Incomes</option>
+          </select>
+          <button type="submit" class="btn btn-dark">Download .csv File</button>
         </form>
       </div>
     </div>
