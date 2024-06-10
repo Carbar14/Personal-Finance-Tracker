@@ -69,7 +69,18 @@ def downloadCsv():
     filename = f"{type}.csv"
     return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
 
+@app.route("/uploadCsv", methods=['GET'])
+def uploadCsv():
+    #establish connection to data base
+    conn = get_db_connection()
 
+    type = request.args.get('type')
+    # if type == 'expenses':
+        
+    # else:
+        
+        
+    
 
 
 @app.route("/login", methods=["GET", "POST"])

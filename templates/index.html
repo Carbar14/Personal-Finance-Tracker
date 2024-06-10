@@ -7,16 +7,30 @@
   {% if expenses -%}
   <div>
     <div
-      style="display: flex; justify-content: space-between; align-items: center"
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      "
     >
       <h2>Expenses</h2>
-      <div style="display: flex;">
-        <form action="/downloadCsv" method="GET" style="display: inline-block">
-          <select name="type" class="form-select" style="max-width: 150px;">
+      <div style="display: flex">
+        <form
+          enctype="multipart/form-data"
+          method="GET"
+          style="display: flex; flex-wrap: wrap"
+        >
+          <select name="type" class="form-select" style="width: 150px">
             <option value="expenses" selected>Expenses</option>
             <option value="incomes">Incomes</option>
           </select>
-          <button type="submit" class="btn btn-dark">Download .csv File</button>
+          <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
+            Download .csv File
+          </button>
+          <button type="submit" formaction="/uploadCsv" class="btn btn-dark">
+            Upload .csv File
+          </button>
         </form>
       </div>
     </div>
@@ -110,17 +124,26 @@
   <!-- INCOMES -->
   {% if incomes -%}
   <div>
-    <form
+    <div
       style="display: flex; justify-content: space-between; align-items: center"
     >
       <h2>Income</h2>
-      <div style="display: flex;">
-        <form action="/downloadCsv" method="GET" style="display: inline-block"></form>
-        <button type="submit" class="btn btn-dark">Download .csv File</button>
-        <select name="type" class="form-select" style="max-width: 150px;">
-          <option value="expenses">Expenses</option>
-          <option value="incomes" selected>Incomes</option>
-        </select>
+      <div style="display: flex">
+        <form
+          enctype="multipart/form-data"
+          method="GET"
+          style="display: flex; flex-wrap: wrap"
+        >
+          <select name="type" class="form-select" style="width: 150px">
+            <option value="expenses" selected>Expenses</option>
+            <option value="incomes">Incomes</option>
+          </select>
+          <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
+            Download .csv File
+          </button>
+          <button type="submit" formaction="/uploadCsv" class="btn btn-dark">
+            Upload .csv File
+          </button>
         </form>
       </div>
     </div>
