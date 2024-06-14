@@ -29,57 +29,106 @@ def index():
     conn = get_db_connection()
 
     #gets all expenses and incomes in variables
-    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
-    inc = conn.execute("SELECT * FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+    exps = conn.execute("SELECT * FROM expenses WHERE user_id = ? ORDER BY id DESC", (session["user_id"],)).fetchall()
+    inc = conn.execute("SELECT * FROM incomes WHERE user_id = ? ORDER BY id DESC", (session["user_id"],)).fetchall()
     # print(exps[1]["color"])
     conn.close()
     return render_template("index.html", expenses=exps, incomes=inc)
 
 
 
-@app.route('/downloadCsv', methods=['GET'])
+@app.route('/downloadCsv', methods=['GET', 'POST'])
 def downloadCsv():
+    if request.method == 'POST':
+        #establish connection to data base
+        conn = get_db_connection()
 
-    #establish connection to data base
-    conn = get_db_connection()
+        type = request.form.get('type')
+        if type == 'expenses':
+            fieldnames = ['category', 'description', 'purchaseLocation', 'quantity', 'price', 'date', 'color']
+            data = conn.execute("SELECT category, description, purchaseLocation, quantity, price, date, color FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
+        else:
+            fieldnames = ['category', 'description', 'method', 'income', 'date', 'color']
+            data = conn.execute("SELECT category, description, method, income, date, color FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+            
 
-    type = request.args.get('type')
-    if type == 'expenses':
-        fieldnames = ['category', 'description', 'purchaseLocation', 'quantity', 'price', 'date']
-        data = conn.execute("SELECT category, description, purchaseLocation, quantity, price, date FROM expenses WHERE user_id = ?", (session["user_id"],)).fetchall()
-    else:
-        fieldnames = ['category', 'description', 'method', 'income', 'date']
-        data = conn.execute("SELECT category, description, method, income, date FROM incomes WHERE user_id = ?", (session["user_id"],)).fetchall()
+        # Convert data to a list of dictionaries
+        data_dicts = [dict(row) for row in data]
+
+        #close connection to database
+        conn.close()
+
+        # Create a CSV in memory
+        si = io.StringIO()
+        cw = csv.DictWriter(si, fieldnames=fieldnames)
+        cw.writeheader()
+        cw.writerows(data_dicts)
         
+        # Return the CSV as a download
+        output = io.BytesIO()
+        output.write(si.getvalue().encode('utf-8'))
+        output.seek(0)
 
-      # Convert data to a list of dictionaries
-    data_dicts = [dict(row) for row in data]
-    
-    # Create a CSV in memory
-    si = io.StringIO()
-    cw = csv.DictWriter(si, fieldnames=fieldnames)
-    cw.writeheader()
-    cw.writerows(data_dicts)
-    
-    # Return the CSV as a download
-    output = io.BytesIO()
-    output.write(si.getvalue().encode('utf-8'))
-    output.seek(0)
+        filename = f"{type}.csv"
+        return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
 
-    filename = f"{type}.csv"
-    return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
-
-@app.route("/uploadCsv", methods=['GET'])
+@app.route("/uploadCsv", methods=['GET', "POST"])
 def uploadCsv():
-    #establish connection to data base
-    conn = get_db_connection()
+    
+    if request.method == 'POST':
+        print("uploading csv")
 
-    type = request.args.get('type')
-    # if type == 'expenses':
-        
-    # else:
-        
-        
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+    
+    
+
+        #read uploaded csv file
+        stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+        reader = csv.DictReader(stream)
+
+        #establish connection to data base
+        conn = get_db_connection()
+
+        type = request.form.get('type')
+   
+        if type == 'expenses':
+            query = '''INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+            for row in reader:
+                print(f'Inserting row: {row}')  # Debug log
+                conn.execute(query, (session["user_id"], row['category'], row['description'], row['purchaseLocation'], row['quantity'], row['price'], row['date'], row.get('color', '')))
+        elif type == 'incomes':
+            query = '''INSERT INTO incomes (user_id, category, description, method, income, date, color) VALUES (?, ?, ?, ?, ?, ?, ?)'''
+            for row in reader:
+                print(f'Inserting row: {row}')  # Debug log
+                conn.execute(query, (session["user_id"], row['category'], row['description'], row['method'], row['income'], row['date'], row.get('color', '')))
+    
+        conn.commit()
+        conn.close()
+        return redirect('/')
+    else:
+        return '''
+        <!doctype html>
+        <title>Upload CSV</title>
+        <h1>Upload CSV</h1>
+        <form method=post enctype=multipart/form-data>
+          <input type=file name=file>
+          <input type=submit value=Upload>
+        </form>
+        <form action="/uploadCsv" method="GET" style="display: inline-block"></form>
+          <select name="type" class="form-select" style="max-width: 150px;">
+            <option value="expenses" selected>Expenses</option>
+            <option value="incomes">Incomes</option>
+          </select>
+          <button type="submit" class="btn btn-dark">Upload CSV File</button>
+        </form>
+        '''
     
 
 

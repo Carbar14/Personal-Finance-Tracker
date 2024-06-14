@@ -17,8 +17,10 @@
       <h2>Expenses</h2>
       <div style="display: flex">
         <form
+          id="uploadForm"
           enctype="multipart/form-data"
-          method="GET"
+          method="POST"
+          action="/uploadCsv"
           style="display: flex; flex-wrap: wrap"
         >
           <select name="type" class="form-select" style="width: 150px">
@@ -28,11 +30,35 @@
           <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
             Download .csv File
           </button>
-          <button type="submit" formaction="/uploadCsv" class="btn btn-dark">
+          <button
+            type="button"
+            class="btn btn-dark"
+            onclick="triggerFileInput()"
+          >
             Upload .csv File
           </button>
+          <input
+            type="file"
+            id="fileInput"
+            name="file"
+            style="display: none"
+            onchange="handleFileSelect(event)"
+          />
         </form>
       </div>
+      <script>
+        function triggerFileInput() {
+          document.getElementById("fileInput").click();
+        }
+
+        function handleFileSelect(event) {
+          const fileInput = event.target;
+          const form = document.getElementById("uploadForm");
+          if (fileInput.files.length > 0) {
+            form.submit();
+          }
+        }
+      </script>
     </div>
     <div class="table-responsive">
       <table class="table table-dark table-striped table-bordered table-hover">
@@ -131,7 +157,8 @@
       <div style="display: flex">
         <form
           enctype="multipart/form-data"
-          method="GET"
+          method="POST"
+          action="/uploadCsv"
           style="display: flex; flex-wrap: wrap"
         >
           <select name="type" class="form-select" style="width: 150px">
@@ -141,11 +168,35 @@
           <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
             Download .csv File
           </button>
-          <button type="submit" formaction="/uploadCsv" class="btn btn-dark">
+          <button
+            type="button"
+            class="btn btn-dark"
+            onclick="triggerFileInput()"
+          >
             Upload .csv File
           </button>
+          <input
+            type="file"
+            id="fileInput"
+            name="file"
+            style="display: none"
+            onchange="handleFileSelect(event)"
+          />
         </form>
       </div>
+      <script>
+        function triggerFileInput() {
+          document.getElementById("fileInput").click();
+        }
+
+        function handleFileSelect(event) {
+          const fileInput = event.target;
+          const form = document.getElementById("uploadForm");
+          if (fileInput.files.length > 0) {
+            form.submit();
+          }
+        }
+      </script>
     </div>
     <div class="table-responsive">
       <table class="table table-dark table-striped table-bordered table-hover">
