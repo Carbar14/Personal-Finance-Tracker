@@ -1,0 +1,84 @@
+<!-- layout -->
+{% extends "layout.html" %}
+
+<!-- Main -->
+{% block body %}
+
+<div class="cont">
+  <h2 style="padding-left: 5px">Importing Data from Excel or Google Sheets</h2>
+
+  <p>
+    If you have data in an Excel document or a Google Sheet that you would like
+    to import into our system, you can easily do so by following these steps:
+  </p>
+
+  <ol>
+    <li>
+      <strong class="slight-red">Export to CSV</strong>:
+      <ul>
+        <li>Open your document in either Excel or Google Sheets.</li>
+        <li>Export the file as a CSV (Comma-Separated Values) file.</li>
+      </ul>
+    </li>
+    <li>
+      <strong class="slight-red"
+        >Ensure Correct Column Names (case insensitive)</strong
+      >:
+      <ul>
+        <li>
+          Before exporting, ensure that your data includes the same column names
+          as shown in the examples below for incomes and expenses.
+        </li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3 class="slight-red">Example Column Names for Expenses:</h3>
+  <ul>
+    <li>Category</li>
+    <li>Description</li>
+    <li>Purchase Location</li>
+    <li>Quantity</li>
+    <li>Price</li>
+    <li>Date</li>
+    <li>Color</li>
+  </ul>
+
+  <h3 class="slight-red">Example Column Names for Incomes:</h3>
+  <ul>
+    <li>Category</li>
+    <li>Description</li>
+    <li>Method</li>
+    <li>Income</li>
+    <li>Date</li>
+    <li>Color</li>
+  </ul>
+
+  <p class="slight-red">
+    Note: Columns can be blank <b>except income, price, quantity, and date.</b>
+  </p>
+
+  <ol start="3">
+    <li>
+      <strong class="slight-red">Importing the CSV File</strong>:
+      <ul>
+        <li>Navigate to the import section of our platform.</li>
+        <li>Choose the CSV file you just exported.</li>
+        <li>Follow the prompts to complete the import process.</li>
+      </ul>
+    </li>
+  </ol>
+  <br />
+  <h3 class="slight-red">Column Naming Examples:</h3>
+  <img
+    style="max-width: 70vw"
+    src="{{ url_for('static', filename='images/expenseExample.png') }}"
+    alt="Expense Example Image"
+  />
+  <img
+    style="max-width: 70vw"
+    src="{{ url_for('static', filename='images/incomeExample.png') }}"
+    alt="Income Example Image"
+  />
+</div>
+{% endblock %}

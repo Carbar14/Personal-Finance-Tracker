@@ -27,12 +27,16 @@
             <option value="expenses" selected>Expenses</option>
             <option value="incomes">Incomes</option>
           </select>
-          <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
+          <button
+            type="submit"
+            formaction="/downloadCsv"
+            class="btn btn-dark btn-margin"
+          >
             Download .csv File
           </button>
           <button
             type="button"
-            class="btn btn-dark"
+            class="btn btn-dark btn-margin"
             onclick="triggerFileInput()"
           >
             Upload .csv File
@@ -44,6 +48,10 @@
             style="display: none"
             onchange="handleFileSelect(event)"
           />
+
+          <a href="/uploadInfo">
+            <i class="icon-info-sign info-icon btn-margin"></i
+          ></a>
         </form>
       </div>
       <script>
@@ -144,6 +152,38 @@
     You have no expenses to display here. To add an expense go
     <a href="/add-expense">here</a>. In the future, use the links in the
     navigation bar on the top!
+    <br>
+    Or you can upload via a CSV file:
+    <form
+    enctype="multipart/form-data"
+    method="POST"
+    action="/uploadCsv"
+    style="display: flex; flex-wrap: wrap"
+  >
+    
+    <select name="type" class="form-select" style="width: 150px">
+      <option value="expenses" selected>Expenses</option>
+      <option value="incomes">Incomes</option>
+    </select>
+    <button
+      type="button"
+      class="btn btn-dark"
+      onclick="triggerFileInput()"
+    >
+      Upload .csv File
+    </button>
+    <input
+      type="file"
+      id="fileInput"
+      name="file"
+      style="display: none"
+      onchange="handleFileSelect(event)"
+    />
+
+    <a href="/uploadInfo">
+      <i class="icon-info-sign info-icon btn-margin"></i
+    ></a>
+  </form>
   </p>
   {% endif %}
 
@@ -162,8 +202,8 @@
           style="display: flex; flex-wrap: wrap"
         >
           <select name="type" class="form-select" style="width: 150px">
-            <option value="expenses" selected>Expenses</option>
-            <option value="incomes">Incomes</option>
+            <option value="expenses" >Expenses</option>
+            <option value="incomes" selected>Incomes</option>
           </select>
           <button type="submit" formaction="/downloadCsv" class="btn btn-dark">
             Download .csv File
@@ -182,6 +222,10 @@
             style="display: none"
             onchange="handleFileSelect(event)"
           />
+
+          <a href="/uploadInfo">
+            <i class="icon-info-sign info-icon btn-margin"></i
+          ></a>
         </form>
       </div>
       <script>
@@ -268,6 +312,38 @@
     You have no income to display here. To add income go
     <a href="/add-income">here</a>. In the future, use the links in the
     navigation bar on the top!
+    <br>
+    Or you can upload via a CSV file:
+    <form
+          enctype="multipart/form-data"
+          method="POST"
+          action="/uploadCsv"
+          style="display: flex; flex-wrap: wrap"
+        >
+          <select name="type" class="form-select" style="width: 150px">
+            <option value="expenses" >Expenses</option>
+            <option value="incomes" selected>Incomes</option>
+          </select>
+          
+          <button
+            type="button"
+            class="btn btn-dark"
+            onclick="triggerFileInput()"
+          >
+            Upload .csv File
+          </button>
+          <input
+            type="file"
+            id="fileInput"
+            name="file"
+            style="display: none"
+            onchange="handleFileSelect(event)"
+          />
+
+          <a href="/uploadInfo">
+            <i class="icon-info-sign info-icon btn-margin"></i
+          ></a>
+        </form>
   </p>
   {% endif %}
 </div>

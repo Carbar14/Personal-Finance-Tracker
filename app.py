@@ -38,6 +38,7 @@ def index():
 
 
 @app.route('/downloadCsv', methods=['GET', 'POST'])
+@login_required
 def downloadCsv():
     if request.method == 'POST':
         #establish connection to data base
@@ -73,6 +74,7 @@ def downloadCsv():
         return send_file(output, mimetype='text/csv', as_attachment=True, download_name=filename)
 
 @app.route("/uploadCsv", methods=['GET', "POST"])
+@login_required
 def uploadCsv():
     
     if request.method == 'POST':
@@ -130,7 +132,10 @@ def uploadCsv():
         </form>
         '''
     
-
+@app.route("/uploadInfo", methods=['GET'])
+@login_required
+def uploadInfo():
+    return render_template("uploadInfo.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

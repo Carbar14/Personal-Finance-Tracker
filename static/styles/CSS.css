@@ -60,6 +60,10 @@
   color: #f0f8ff !important;
 }
 
+.slight-red {
+  color: #f8caca !important;
+}
+
 /* LINE CHART */
 
 .line-chart-filter {
@@ -109,4 +113,12 @@
 
 tr > * {
   padding: 20px !important;
+}
+
+.btn-margin {
+  margin: 2px !important;
+}
+
+a {
+  text-decoration: dotted !important;
 }
