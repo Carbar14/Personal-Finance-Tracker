@@ -143,7 +143,59 @@
             <th scope="col">Price</th>
             <th scope="col">Date</th>
             <th scope="col">
-              Delete
+              Delete <br>
+              <div id="expensesContainer">
+                {% for expense in expenses %}
+                <form id="form-{{expense['id']}}" action="/delete" method="POST" style="display: inline-block">
+                  <input type="hidden" id="type" name="type" value="expenses" />
+                  <input type="hidden" id="id" name="id" value="{{expense['id']}}" />
+                  <input type="hidden" id="direct" name="direct" value="/analyzeExpenses" />
+                </form>
+                {% endfor %}
+
+              </div>
+                <button
+                  onclick="submitDeletes()"
+                   class="delete-btn btn btn-dark"
+                  style="color: red; border: 0; text-align: center"
+                >
+                  X Delete All In Search
+                </button>
+
+                <script>
+                  function submitDeletes() {
+                    if(confirm("Are you sure you want to delete all the expenses yous see?")){
+                        const forms = document.querySelectorAll('#expensesContainer form')
+                        forms.forEach((form, index) => {
+                        setTimeout(() => {
+                          const formData = new FormData(form);
+                          fetch(form.action, {
+                            method: form.method,
+                            body: formData
+                          })
+                          .then(response => {
+                            if (!response.ok) {
+                              throw new Error('Network response was not ok');
+                            }
+                            return response.text();
+                          })
+                          .then(data => {
+                            console.log('Form submitted successfully:', form.id);
+                          })
+                          .catch(error => {
+                            console.error('There was a problem with your submission:', error);
+                          });
+
+                          if (index === forms.length - 1) {
+                            setTimeout(() => {
+                              location.reload();
+                            }, 100);
+                          }
+                        }, index * 100); // Delay each submission by 100ms to ensure they're all sent
+                      });
+                    }
+                  }
+                </script>
               <br />
               <div class="info-container">
                 <i class="icon-info-sign info-icon"></i>

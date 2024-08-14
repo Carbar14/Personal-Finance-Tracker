@@ -372,6 +372,20 @@ def delete():
 
     return redirect(direct)
 
+@app.route('/deleteAll', methods=['POST'])
+def deleteAll():
+    #establish connection to database
+    conn = get_db_connection()
+
+    type = request.form.get("type")
+    direct = request.form.get("direct")
+    conn.execute(f"DELETE from {type} WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(direct)
+
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
     #establish connection to database
