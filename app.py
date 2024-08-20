@@ -81,13 +81,17 @@ def uploadCsv():
         print("uploading csv")
 
         if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+            flash('No File Part')
+            return redirect("/")
 
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            flash('No Selected File')
+            return redirect("/")
+        #check file extension
+        elif file.filename.split(".")[-1] != 'csv':
+            flash("File Must Have The File Extension .csv")
+            return redirect("/")
     
     
 
@@ -99,13 +103,28 @@ def uploadCsv():
         conn = get_db_connection()
 
         type = request.form.get('type')
-   
+
         if type == 'expenses':
+            #check fieldnames
+            expectedFieldnames = ['category', 'description', 'purchaselocation', 'quantity', 'price', 'date', 'color']
+            actualFieldnames = [fieldname.strip().replace(" ", "").lower() for fieldname in reader.fieldnames]
+            if expectedFieldnames != actualFieldnames:
+                print(actualFieldnames)
+                flash("Incorrect Column Names")
+                return redirect("/")
+
             query = '''INSERT INTO expenses (user_id, category, description, purchaseLocation, quantity, price, date, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
             for row in reader:
                 print(f'Inserting row: {row}')  # Debug log
-                conn.execute(query, (session["user_id"], row['category'], row['description'], row['purchaseLocation'], row['quantity'], row['price'], row['date'], row.get('color', '')))
+                conn.execute(query, (session["user_id"], row['category'], row['description'], row['purchaselocation'], row['quantity'], row['price'], row['date'], row.get('color', '')))
         elif type == 'incomes':
+            #check fieldnames
+            expectedFieldnames = ['category', 'description', 'method', 'income', 'date', 'color']
+            actualFieldnames = [fieldname.strip().replace(" ", "").lower() for fieldname in reader.fieldnames]
+            if expectedFieldnames != actualFieldnames:
+                flash("Incorrect Column Names")
+                return redirect("/")
+
             query = '''INSERT INTO incomes (user_id, category, description, method, income, date, color) VALUES (?, ?, ?, ?, ?, ?, ?)'''
             for row in reader:
                 print(f'Inserting row: {row}')  # Debug log

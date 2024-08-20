@@ -3,6 +3,9 @@
 <!-- Main -->
 {% block body %}
 <div class="cont center-horizontal" style="max-width: 1300px">
+  {% for message in get_flashed_messages() %}
+  <div class="alert" style="color: red">{{ message }}</div>
+  {% endfor %}
   <!-- Expenses  -->
   {% if expenses -%}
   <div>
@@ -17,7 +20,7 @@
       <h2>Expenses</h2>
       <div style="display: flex">
         <form
-          id="uploadForm"
+          id="uploadFormExpenses"
           enctype="multipart/form-data"
           method="POST"
           action="/uploadCsv"
@@ -37,16 +40,16 @@
           <button
             type="button"
             class="btn btn-dark btn-margin"
-            onclick="triggerFileInput()"
+            onclick="triggerFileInput('fileInputExpenses')"
           >
             Upload .csv File
           </button>
           <input
             type="file"
-            id="fileInput"
+            id="fileInputExpenses"
             name="file"
             style="display: none"
-            onchange="handleFileSelect(event)"
+            onchange="handleFileSelect(event, 'uploadFormExpenses')"
           />
 
           <a href="/uploadInfo">
@@ -55,13 +58,13 @@
         </form>
       </div>
       <script>
-        function triggerFileInput() {
-          document.getElementById("fileInput").click();
+        function triggerFileInput(fileInputId) {
+          document.getElementById(fileInputId).click();
         }
 
-        function handleFileSelect(event) {
+        function handleFileSelect(event, formId) {
           const fileInput = event.target;
-          const form = document.getElementById("uploadForm");
+          const form = document.getElementById(formId);
           if (fileInput.files.length > 0) {
             form.submit();
           }
@@ -155,6 +158,7 @@
     <br>
     Or you can upload via a CSV file:
     <form
+    id="uploadFormExpenses"
     enctype="multipart/form-data"
     method="POST"
     action="/uploadCsv"
@@ -168,21 +172,34 @@
     <button
       type="button"
       class="btn btn-dark"
-      onclick="triggerFileInput()"
+      onclick="triggerFileInput('fileInputExpenses')"
     >
       Upload .csv File
     </button>
     <input
       type="file"
-      id="fileInput"
+      id="fileInputExpenses"
       name="file"
       style="display: none"
-      onchange="handleFileSelect(event)"
+      onchange="handleFileSelect(event, 'uploadFormExpenses')"
     />
 
     <a href="/uploadInfo">
       <i class="icon-info-sign info-icon btn-margin"></i
     ></a>
+    <script>
+      function triggerFileInput(fileInputId) {
+        document.getElementById(fileInputId).click();
+      }
+
+      function handleFileSelect(event, formId) {
+        const fileInput = event.target;
+        const form = document.getElementById(formId)
+        if (fileInput.files.length > 0) {
+          form.submit();
+        }
+      }
+    </script>
   </form>
   </p>
   {% endif %}
@@ -196,6 +213,7 @@
       <h2>Income</h2>
       <div style="display: flex">
         <form
+          id="uploadFormIncomes"
           enctype="multipart/form-data"
           method="POST"
           action="/uploadCsv"
@@ -211,16 +229,16 @@
           <button
             type="button"
             class="btn btn-dark"
-            onclick="triggerFileInput()"
+            onclick="triggerFileInput('fileInputIncomes')"
           >
             Upload .csv File
           </button>
           <input
             type="file"
-            id="fileInput"
+            id="fileInputIncomes"
             name="file"
             style="display: none"
-            onchange="handleFileSelect(event)"
+            onchange="handleFileSelect(event, 'uploadFormIncomes')"
           />
 
           <a href="/uploadInfo">
@@ -229,13 +247,13 @@
         </form>
       </div>
       <script>
-        function triggerFileInput() {
-          document.getElementById("fileInput").click();
+        function triggerFileInput(fileInputId) {
+          document.getElementById(fileInputId).click();
         }
 
-        function handleFileSelect(event) {
+        function handleFileSelect(event, formdId) {
           const fileInput = event.target;
-          const form = document.getElementById("uploadForm");
+          const form = document.getElementById(formId);
           if (fileInput.files.length > 0) {
             form.submit();
           }
@@ -315,6 +333,7 @@
     <br>
     Or you can upload via a CSV file:
     <form
+          id="uploadFormIncomes"
           enctype="multipart/form-data"
           method="POST"
           action="/uploadCsv"
@@ -328,21 +347,37 @@
           <button
             type="button"
             class="btn btn-dark"
-            onclick="triggerFileInput()"
+            onclick="triggerFileInput('fileInputIncomes')"
           >
             Upload .csv File
           </button>
           <input
             type="file"
-            id="fileInput"
+            id="fileInputIncomes"
             name="file"
             style="display: none"
-            onchange="handleFileSelect(event)"
+            onchange="handleFileSelect(event, 'uploadFormIncomes')"
           />
 
           <a href="/uploadInfo">
             <i class="icon-info-sign info-icon btn-margin"></i
           ></a>
+
+          <script>
+            function triggerFileInput(fileInputId) {
+              document.getElementById(fileInputId).click();
+
+            }
+    
+            function handleFileSelect(event, formId) {
+              const fileInput = event.target;
+              const form = document.getElementById(formId);
+              console.log(formId)
+              if (fileInput.files.length > 0) {
+                form.submit();
+              }
+            }
+          </script>
         </form>
   </p>
   {% endif %}
