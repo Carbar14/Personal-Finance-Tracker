@@ -251,7 +251,7 @@ def register():
         elif password != passwordCheck:
             flash('Passwords do not match!')
         # Username inputted doesn't exist
-        elif conn.execute("SELECT * FROM users WHERE username = ?", username).fetchall():
+        elif conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall():
             flash('Username already taken')
         #Everything checks out
         else:
